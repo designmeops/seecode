@@ -25,8 +25,9 @@ export function CategoryIcon({
       className={cn("inline-flex shrink-0 items-center justify-center", box, className)}
       style={{
         color,
-        backgroundColor: `color-mix(in srgb, ${color} 13%, white)`,
-        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${color} 18%, transparent)`,
+        // Translucent tints read on every surface, in both themes.
+        backgroundColor: `color-mix(in srgb, ${color} 14%, transparent)`,
+        boxShadow: `inset 0 0 0 1px color-mix(in srgb, ${color} 20%, transparent)`,
       }}
     >
       <Icon size={icon} strokeWidth={2} />

@@ -37,7 +37,7 @@ function MobileNavigation() {
       onOpenChange={(next) => (next ? openDialog("navigation") : closeDialog())}
     >
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-[rgb(16_17_26/0.24)] data-[state=open]:animate-fade-in lg:hidden" />
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-overlay data-[state=open]:animate-fade-in lg:hidden" />
         <Dialog.Content
           aria-describedby={undefined}
           className="fixed inset-y-0 left-0 z-50 w-[272px] max-w-[85vw] border-r border-line bg-app shadow-modal outline-hidden data-[state=open]:animate-drawer-in lg:hidden"

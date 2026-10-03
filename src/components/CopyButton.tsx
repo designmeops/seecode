@@ -1,12 +1,9 @@
 import { Check, Copy } from "lucide-react";
-import { type MouseEvent, useEffect, useState } from "react";
+import type { MouseEvent } from "react";
+import { useCopied } from "../hooks/useCopied";
 import { cn } from "../lib/cn";
-import { copiedStore } from "../lib/copy";
-import { useStore } from "../lib/store";
 import { Button, type ButtonProps } from "./ui/Button";
 import { Tooltip } from "./ui/Tooltip";
-
-const FLASH_MS = 1600;
 
 interface CopyButtonProps extends Omit<ButtonProps, "onClick" | "onCopy"> {
   /** Identifies what gets copied, so shortcut-triggered copies flash this button too. */
@@ -35,17 +32,7 @@ export function CopyButton({
   className,
   ...props
 }: CopyButtonProps) {
-  const last = useStore(copiedStore);
-  const [now, setNow] = useState(() => Date.now());
-  const copied = last?.key === copyKey && now - last.at < FLASH_MS;
-
-  // Re-render once the flash window ends.
-  useEffect(() => {
-    if (!last || last.key !== copyKey) return;
-    setNow(Date.now());
-    const timeout = setTimeout(() => setNow(Date.now()), FLASH_MS);
-    return () => clearTimeout(timeout);
-  }, [last, copyKey]);
+  const copied = useCopied(copyKey);
 
   async function handleClick(event: MouseEvent) {
     event.stopPropagation();

@@ -2,10 +2,8 @@ import {
   ChevronRight,
   Clock,
   Compass,
-  Copy,
   Hash,
   LayoutGrid,
-  Layers,
   List,
   Search,
   SearchX,
@@ -19,6 +17,7 @@ import { Popover } from "radix-ui";
 import {
   type KeyboardEvent,
   type ReactNode,
+  type RefObject,
   useCallback,
   useDeferredValue,
   useEffect,
@@ -30,7 +29,7 @@ import { ComponentCard } from "../components/ComponentCard";
 import { ComponentRow } from "../components/ComponentRow";
 import { EmptyState } from "../components/EmptyState";
 import { toggleFavoriteWithToast } from "../components/FavoriteButton";
-import { PageHeader } from "../components/layout/PageHeader";
+import { NavigationButton, PageHeader } from "../components/layout/PageHeader";
 import { ScrollArea } from "../components/layout/ScrollArea";
 import { Button, focusRing } from "../components/ui/Button";
 import { CategoryIcon } from "../components/ui/CategoryIcon";
@@ -40,7 +39,7 @@ import { Tooltip } from "../components/ui/Tooltip";
 import { useHotkeys } from "../hooks/useHotkeys";
 import { cn } from "../lib/cn";
 import { copyComponent } from "../lib/copy";
-import { formatRelative, isRecent } from "../lib/format";
+import { formatRelative } from "../lib/format";
 import { type BrowseRoute, navigate, rememberBrowseRoute, routeKey } from "../lib/router";
 import { applyQuickFilter, matchesQuery, type QuickFilter, sortItems } from "../lib/search";
 import {
@@ -203,106 +202,58 @@ export function BrowsePage({ route }: { route: BrowseRoute }) {
     }
   }
 
-  const filtersActive = query !== "" || quick !== "all";
-  const recordFor = (item: RegistryItem) => copies.get(item.slug);
   const metaFor =
     route.name === "recent"
       ? (item: RegistryItem) => {
-          const record = recordFor(item);
+          const record = copies.get(item.slug);
           return record ? `Copied ${formatRelative(record.at)}` : undefined;
         }
       : () => undefined;
 
   return (
     <>
-      <PageHeader
-        actions={
-          route.name === "recent" && history.length > 0 ? (
-            <Button variant="ghost" size="sm" onClick={clearHistory}>
-              <Trash2 size={14} strokeWidth={1.9} />
-              Clear history
-            </Button>
-          ) : null
-        }
-      >
-        <span className="flex size-[18px] items-center justify-center">{meta.icon}</span>
-        <h1 className="truncate text-[13.5px] font-medium text-ink">
-          {route.name === "tag" ? (
-            <>
-              <span className="text-ink-3">Tagged </span>
-              {meta.title}
-            </>
-          ) : (
-            meta.title
-          )}
-        </h1>
-        <span className="text-[12px] text-ink-4 tabular-nums">{meta.scope.length}</span>
-      </PageHeader>
-
-      <div className="flex shrink-0 flex-wrap items-center gap-2 border-b border-line-subtle px-2 py-2 sm:px-3 lg:px-4">
-        <div role="group" aria-label="Quick filters" className="flex items-center gap-1">
-          {QUICK_FILTERS.map((filter) => (
-            <button
-              key={filter.value}
-              type="button"
-              aria-pressed={quick === filter.value}
-              onClick={() => setQuick(filter.value)}
-              className={cn(
-                "inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-[12.5px] font-medium transition-colors",
-                focusRing,
-                quick === filter.value
-                  ? "border-line bg-panel text-ink shadow-control"
-                  : "border-transparent text-ink-3 hover:bg-hover hover:text-ink-2",
-              )}
-            >
-              {filter.value === "new" && (
-                <Sparkles size={13} strokeWidth={1.9} className="text-brand" />
-              )}
-              {filter.label}
-            </button>
-          ))}
+      <PageHeader>
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:flex-none">
+          <NavigationButton />
+          <span className="flex size-[18px] shrink-0 items-center justify-center">{meta.icon}</span>
+          <h1 className="truncate text-[13.5px] font-medium text-ink">
+            {route.name === "tag" ? (
+              <>
+                <span className="text-ink-3">Tagged </span>
+                {meta.title}
+              </>
+            ) : (
+              meta.title
+            )}
+          </h1>
+          <span className="text-[12px] text-ink-4 tabular-nums">{meta.scope.length}</span>
         </div>
 
-        <div className="order-last flex w-full items-center gap-2 sm:order-none sm:ml-auto sm:w-auto">
-          <label className="relative flex h-7 flex-1 items-center sm:w-60 sm:flex-none">
-            <span className="sr-only">Filter components</span>
-            <Search
-              size={14}
-              strokeWidth={1.9}
-              className="pointer-events-none absolute left-2 text-ink-4"
-            />
-            <input
-              ref={inputRef}
-              type="search"
-              value={query}
-              placeholder="Filter components…"
-              onChange={(event) => setQuery(event.target.value)}
-              onKeyDown={onFilterKeyDown}
-              className="h-7 w-full rounded-md border border-line bg-panel pr-8 pl-7 text-[12.5px] text-ink shadow-control transition-[border-color,box-shadow] outline-hidden placeholder:text-ink-4 focus:border-brand/50 focus:shadow-[0_0_0_3px_rgb(94_106_210/0.12)] [&::-webkit-search-cancel-button]:hidden"
-            />
-            {query ? (
-              <button
-                type="button"
-                aria-label="Clear filter"
-                onClick={() => {
-                  setQuery("");
-                  inputRef.current?.focus();
-                }}
-                className="absolute right-1.5 inline-flex size-5 items-center justify-center rounded text-ink-4 hover:bg-hover hover:text-ink-2"
-              >
-                <X size={13} />
-              </button>
-            ) : (
-              <Kbd className="pointer-events-none absolute right-1.5">/</Kbd>
-            )}
-          </label>
+        <div className="order-last flex basis-full items-center gap-2 sm:order-none sm:ml-2 sm:flex-1 sm:basis-auto">
+          <QuickFilters value={quick} onChange={setQuick} />
+          <FilterField
+            inputRef={inputRef}
+            value={query}
+            onChange={setQuery}
+            onKeyDown={onFilterKeyDown}
+            className="flex-1 sm:ml-auto sm:w-56 sm:flex-none"
+          />
+        </div>
+
+        <div className="flex items-center gap-1">
+          {route.name === "recent" && history.length > 0 && (
+            <Tooltip label="Clear history">
+              <Button variant="ghost" size="sm" onClick={clearHistory} aria-label="Clear history">
+                <Trash2 size={14} strokeWidth={1.9} />
+                <span className="max-md:hidden">Clear</span>
+              </Button>
+            </Tooltip>
+          )}
           <DisplayOptions view={prefs.view} sort={prefs.sort} />
         </div>
-      </div>
+      </PageHeader>
 
       <ScrollArea routeKey={routeKey(route)}>
-        {route.name === "explore" && !filtersActive && <ExploreIntro copies={history} />}
-
         {meta.scope.length === 0 ? (
           <ScopeEmptyState route={route} />
         ) : items.length === 0 ? (
@@ -331,7 +282,7 @@ export function BrowsePage({ route }: { route: BrowseRoute }) {
         ) : prefs.view === "grid" ? (
           <div
             onPointerLeave={clearHover}
-            className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,292px),1fr))] gap-3 px-3 py-4 sm:p-5"
+            className="grid grid-cols-[repeat(auto-fill,minmax(min(100%,320px),1fr))] gap-4 p-3 sm:p-5"
           >
             {items.map((item) => (
               <ComponentCard
@@ -361,7 +312,7 @@ export function BrowsePage({ route }: { route: BrowseRoute }) {
                             return next;
                           })
                         }
-                        className="sticky top-0 z-20 flex h-9 w-full items-center gap-2 border-b border-line-subtle bg-[#f8f8fa]/95 pr-3 pl-3 text-left backdrop-blur-sm transition-colors hover:bg-[#f3f3f6] sm:pl-4"
+                        className="sticky top-0 z-20 flex h-9 w-full items-center gap-2 border-b border-line-subtle bg-group/95 pr-3 pl-3 text-left backdrop-blur-sm transition-colors hover:bg-row-focus sm:pl-4"
                       >
                         <ChevronRight
                           size={12}
@@ -408,14 +359,101 @@ export function BrowsePage({ route }: { route: BrowseRoute }) {
   );
 }
 
+/** Linear-style view tabs. */
+function QuickFilters({
+  value,
+  onChange,
+}: {
+  value: QuickFilter;
+  onChange: (value: QuickFilter) => void;
+}) {
+  return (
+    <div role="group" aria-label="Quick filters" className="flex items-center gap-1">
+      {QUICK_FILTERS.map((filter) => (
+        <button
+          key={filter.value}
+          type="button"
+          aria-pressed={value === filter.value}
+          onClick={() => onChange(filter.value)}
+          className={cn(
+            "inline-flex h-7 items-center gap-1.5 rounded-md border px-2.5 text-[12.5px] font-medium whitespace-nowrap transition-colors",
+            focusRing,
+            value === filter.value
+              ? "border-line bg-card text-ink shadow-control"
+              : "border-transparent text-ink-3 hover:bg-hover hover:text-ink-2",
+          )}
+        >
+          {filter.value === "new" && (
+            <Sparkles size={13} strokeWidth={1.9} className="text-brand-ink" />
+          )}
+          {filter.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function FilterField({
+  inputRef,
+  value,
+  onChange,
+  onKeyDown,
+  className,
+}: {
+  inputRef: RefObject<HTMLInputElement | null>;
+  value: string;
+  onChange: (value: string) => void;
+  onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => void;
+  className?: string;
+}) {
+  return (
+    <label className={cn("relative flex h-7 min-w-0 items-center", className)}>
+      <span className="sr-only">Filter components</span>
+      <Search
+        size={14}
+        strokeWidth={1.9}
+        className="pointer-events-none absolute left-2 text-ink-4"
+      />
+      <input
+        ref={inputRef}
+        type="search"
+        value={value}
+        placeholder="Filter…"
+        onChange={(event) => onChange(event.target.value)}
+        onKeyDown={onKeyDown}
+        className="h-7 w-full rounded-md border border-line bg-field pr-8 pl-7 text-[12.5px] text-ink shadow-control transition-[border-color,box-shadow] outline-hidden placeholder:text-ink-4 hover:border-line-strong focus:border-brand/60 focus:shadow-[0_0_0_3px_color-mix(in_srgb,var(--color-brand)_16%,transparent)] [&::-webkit-search-cancel-button]:hidden"
+      />
+      {value ? (
+        <button
+          type="button"
+          aria-label="Clear filter"
+          onClick={() => {
+            onChange("");
+            inputRef.current?.focus();
+          }}
+          className="absolute right-1.5 inline-flex size-5 items-center justify-center rounded text-ink-4 hover:bg-hover hover:text-ink-2"
+        >
+          <X size={13} />
+        </button>
+      ) : (
+        <Kbd className="pointer-events-none absolute right-1.5">/</Kbd>
+      )}
+    </label>
+  );
+}
+
 function DisplayOptions({ view, sort }: { view: ViewMode; sort: SortMode }) {
   return (
     <Popover.Root>
       <Tooltip label="Display options">
         <Popover.Trigger asChild>
-          <Button size="sm" className="data-[state=open]:bg-subtle data-[state=open]:text-ink">
+          <Button
+            size="sm"
+            aria-label="Display options"
+            className="data-[state=open]:border-line-strong data-[state=open]:bg-control-hover data-[state=open]:text-ink"
+          >
             <SlidersHorizontal size={14} strokeWidth={1.9} />
-            <span className="hidden sm:inline">Display</span>
+            <span className="max-sm:hidden">Display</span>
           </Button>
         </Popover.Trigger>
       </Tooltip>
@@ -424,12 +462,12 @@ function DisplayOptions({ view, sort }: { view: ViewMode; sort: SortMode }) {
           align="end"
           sideOffset={6}
           collisionPadding={8}
-          className="z-[70] w-[284px] rounded-lg border border-line bg-panel p-3 shadow-pop outline-hidden data-[state=open]:animate-pop-in"
+          className="z-[70] w-[284px] rounded-lg border border-line bg-raised p-3 shadow-pop outline-hidden data-[state=open]:animate-pop-in"
         >
           <div className="space-y-3">
-            <OptionRow label="View">
+            <OptionRow label="Layout">
               <Segmented
-                label="View"
+                label="Layout"
                 value={view}
                 onChange={(next) => setPreference("view", next)}
                 options={[
@@ -473,44 +511,6 @@ function OptionRow({ label, children }: { label: string; children: ReactNode }) 
   );
 }
 
-function ExploreIntro({ copies }: { copies: CopyRecord[] }) {
-  const newCount = registry.filter((item) => isRecent(item.createdAt)).length;
-  const totalCopies = copies.reduce((sum, entry) => sum + entry.count, 0);
-  const stats = [
-    { icon: Layers, value: registry.length, label: "components" },
-    { icon: Compass, value: categories.length, label: "categories" },
-    { icon: Sparkles, value: newCount, label: "new this month" },
-    { icon: Copy, value: totalCopies, label: totalCopies === 1 ? "copy by you" : "copies by you" },
-  ];
-
-  return (
-    <section className="border-b border-line-subtle px-4 pt-7 pb-6 sm:px-6 sm:pt-9">
-      <h2 className="max-w-2xl text-[22px] leading-7 font-semibold tracking-[-0.022em] text-ink sm:text-[28px] sm:leading-[34px]">
-        Components, ready to paste.
-      </h2>
-      <p className="mt-2 max-w-xl text-[14px] leading-[22px] text-ink-3">
-        A marketplace of React components built with Tailwind CSS. Preview each one live, then copy
-        the code in a single click.
-      </p>
-      <dl className="mt-5 flex flex-wrap gap-2">
-        {stats.map(({ icon: Icon, value, label }) => (
-          <div
-            key={label}
-            className="flex h-8 items-center gap-2 rounded-lg border border-line bg-subtle px-3 text-[12.5px]"
-          >
-            <Icon size={14} strokeWidth={1.9} className="text-ink-3" />
-            <dt className="sr-only">{label}</dt>
-            <dd className="flex items-baseline gap-1">
-              <span className="font-semibold text-ink tabular-nums">{value}</span>
-              <span className="text-ink-3">{label}</span>
-            </dd>
-          </div>
-        ))}
-      </dl>
-    </section>
-  );
-}
-
 function ScopeEmptyState({ route }: { route: BrowseRoute }) {
   const explore = (
     <Button size="sm" onClick={() => navigate({ name: "explore" })}>
@@ -526,8 +526,7 @@ function ScopeEmptyState({ route }: { route: BrowseRoute }) {
         title="No favorites yet"
         description={
           <>
-            Star a component to keep it here — hover a card and click the star, or press{" "}
-            <Kbd>F</Kbd>.
+            Right-click a component and choose Add to favorites, or hover it and press <Kbd>F</Kbd>.
           </>
         }
         action={explore}

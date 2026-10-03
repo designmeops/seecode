@@ -1,16 +1,14 @@
+import { Star } from "lucide-react";
 import { memo, type ReactNode } from "react";
-import { copyComponent, copyKey } from "../lib/copy";
-import { formatShortDate, isRecent } from "../lib/format";
+import { formatShortDate } from "../lib/format";
 import { preloadHighlighter } from "../lib/highlight";
 import { toHref } from "../lib/router";
+import { useFavorites } from "../lib/state";
 import type { RegistryItem } from "../registry/types";
 import { openUnlessInteractive } from "./ComponentCard";
 import { ComponentContextMenu } from "./ComponentMenu";
-import { CopyButton } from "./CopyButton";
-import { FavoriteButton } from "./FavoriteButton";
-import { AuthorAvatar } from "./ui/Avatar";
+import { FormatCopyButtons } from "./FormatCopyButtons";
 import { CategoryIcon } from "./ui/CategoryIcon";
-import { NewBadge, TagPill } from "./ui/Pill";
 
 interface ComponentRowProps {
   item: RegistryItem;
@@ -27,6 +25,7 @@ export const ComponentRow = memo(function ComponentRow({
   onHover,
   meta,
 }: ComponentRowProps) {
+  const favorite = useFavorites().includes(item.slug);
   const href = toHref({ name: "component", slug: item.slug });
 
   return (
@@ -37,7 +36,7 @@ export const ComponentRow = memo(function ComponentRow({
         onPointerMove={() => onHover?.(item.slug)}
         onPointerEnter={preloadHighlighter}
         onClick={(event) => openUnlessInteractive(event, item.slug)}
-        className="group/row flex h-11 cursor-pointer scroll-m-10 items-center gap-3 border-b border-line-subtle pr-3 pl-4 transition-colors hover:bg-[#f7f7f9] data-[focused]:bg-[#f4f4f7] sm:pl-5"
+        className="group/row flex h-11 cursor-pointer scroll-m-10 items-center gap-3 border-b border-line-subtle pr-3 pl-4 transition-colors hover:bg-row-hover data-[focused]:bg-row-focus sm:pl-5"
       >
         <span className="hidden w-11 shrink-0 text-[12px] text-ink-4 tabular-nums sm:block">
           {item.id}
@@ -49,32 +48,23 @@ export const ComponentRow = memo(function ComponentRow({
         >
           {item.name}
         </a>
-        {isRecent(item.createdAt) && <NewBadge />}
+        {favorite && (
+          <Star
+            size={12}
+            strokeWidth={2}
+            fill="currentColor"
+            aria-label="In favorites"
+            className="-ml-1 shrink-0 text-star"
+          />
+        )}
         <span className="hidden min-w-0 flex-1 truncate text-mini text-ink-3 md:block">
           {item.description}
         </span>
         <span className="flex-1 md:hidden" />
-        <div className="flex shrink-0 items-center gap-2">
-          <div className="hidden items-center gap-1 xl:flex">
-            {item.tags.slice(0, 2).map((tag) => (
-              <TagPill key={tag} tag={tag} />
-            ))}
-          </div>
-          <span className="hidden w-[104px] text-right text-[12px] whitespace-nowrap text-ink-4 tabular-nums sm:block">
-            {meta ?? formatShortDate(item.createdAt)}
-          </span>
-          <AuthorAvatar author={item.author} size="sm" className="max-sm:hidden" />
-          <FavoriteButton item={item} />
-          <CopyButton
-            copyKey={copyKey(item)}
-            onCopy={() => copyComponent(item)}
-            tooltip={`Copy ${item.files[0].name}`}
-            shortcut="c"
-            aria-label={`Copy ${item.files[0].name}`}
-            className="max-sm:w-7 max-sm:px-0"
-            labelClassName="hidden sm:inline"
-          />
-        </div>
+        <span className="hidden w-[104px] shrink-0 text-right text-[12px] whitespace-nowrap text-ink-4 tabular-nums sm:block">
+          {meta ?? formatShortDate(item.createdAt)}
+        </span>
+        <FormatCopyButtons item={item} />
       </div>
     </ComponentContextMenu>
   );

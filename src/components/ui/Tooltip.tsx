@@ -35,7 +35,7 @@ export function Tooltip({
           align={align}
           sideOffset={6}
           collisionPadding={8}
-          className="z-[70] flex items-center gap-2 rounded-md border border-line bg-panel px-2 py-1 text-[12px] font-medium text-ink-2 shadow-pop data-[state=delayed-open]:animate-pop-in data-[state=instant-open]:animate-pop-in"
+          className="z-[70] flex items-center gap-2 rounded-md border border-line bg-raised px-2 py-1 text-[12px] font-medium text-ink-2 shadow-pop data-[state=delayed-open]:animate-pop-in data-[state=instant-open]:animate-pop-in"
         >
           {label}
           {shortcut && <Shortcut keys={shortcut} />}

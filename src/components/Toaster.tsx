@@ -14,7 +14,7 @@ const icons: Record<ToastTone, ReactNode> = {
     </span>
   ),
   error: (
-    <span className="flex size-[18px] items-center justify-center rounded-full bg-[#e5484d] text-white">
+    <span className="flex size-[18px] items-center justify-center rounded-full bg-danger text-white">
       <TriangleAlert size={10} strokeWidth={2.6} />
     </span>
   ),
@@ -35,7 +35,7 @@ export function Toaster() {
           role={toast.tone === "error" ? "alert" : undefined}
           onPointerEnter={pauseToasts}
           onPointerLeave={resumeToasts}
-          className="pointer-events-auto flex w-full items-center gap-3 rounded-lg border border-line bg-panel py-2.5 pr-2 pl-3 shadow-pop animate-toast-in"
+          className="pointer-events-auto flex w-full items-center gap-3 rounded-lg border border-line bg-raised py-2.5 pr-2 pl-3 shadow-pop animate-toast-in"
         >
           {icons[toast.tone]}
           <div className="min-w-0 flex-1">

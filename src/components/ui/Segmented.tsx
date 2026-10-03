@@ -2,11 +2,19 @@ import type { ReactNode } from "react";
 import { cn } from "../../lib/cn";
 import { focusRing } from "./Button";
 
+interface SegmentedOption<T extends string> {
+  value: T;
+  label: string;
+  icon?: ReactNode;
+}
+
 interface SegmentedProps<T extends string> {
   label: string;
   value: T;
-  options: { value: T; label: string; icon?: ReactNode }[];
+  options: SegmentedOption<T>[];
   onChange: (value: T) => void;
+  /** Show only the icons; labels become accessible names and tooltips. */
+  iconOnly?: boolean;
   className?: string;
 }
 
@@ -15,13 +23,14 @@ export function Segmented<T extends string>({
   value,
   options,
   onChange,
+  iconOnly = false,
   className,
 }: SegmentedProps<T>) {
   return (
     <div
       role="radiogroup"
       aria-label={label}
-      className={cn("inline-flex rounded-md border border-line-subtle bg-muted p-0.5", className)}
+      className={cn("inline-flex rounded-md bg-muted p-0.5", className)}
       onKeyDown={(event) => {
         if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
         event.preventDefault();
@@ -41,18 +50,19 @@ export function Segmented<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
+            aria-label={iconOnly ? option.label : undefined}
+            title={iconOnly ? option.label : undefined}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(option.value)}
             className={cn(
-              "inline-flex h-6 flex-1 items-center justify-center gap-1.5 rounded-[5px] px-2 text-[12px] font-medium whitespace-nowrap transition-colors",
+              "inline-flex h-6 flex-1 items-center justify-center gap-1.5 rounded-[5px] text-[12px] font-medium whitespace-nowrap transition-colors",
+              iconOnly ? "w-7" : "px-2",
               focusRing,
-              selected
-                ? "bg-panel text-ink shadow-[0_1px_2px_rgb(16_17_26/0.08),0_0_0_1px_rgb(16_17_26/0.04)]"
-                : "text-ink-3 hover:text-ink-2",
+              selected ? "bg-thumb text-ink shadow-thumb" : "text-ink-3 hover:text-ink-2",
             )}
           >
             {option.icon}
-            {option.label}
+            {!iconOnly && option.label}
           </button>
         );
       })}

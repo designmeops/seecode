@@ -4,31 +4,36 @@ import { cn } from "../../lib/cn";
 import { openDialog } from "../../lib/state";
 import { IconButton } from "../ui/Button";
 
-export function PageHeader({
-  children,
-  actions,
-  className,
-}: {
-  children: ReactNode;
-  actions?: ReactNode;
-  className?: string;
-}) {
+/**
+ * The single top bar of every page, like Linear's: title, views, filters and
+ * actions all live here. It wraps onto a second row on narrow screens.
+ */
+export function PageHeader({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <header
       className={cn(
-        "flex h-12 shrink-0 items-center gap-2 border-b border-line-subtle pr-2 pl-2 sm:pr-3 lg:pl-4",
+        "flex min-h-12 shrink-0 flex-wrap items-center gap-x-2 gap-y-2 border-b border-line-subtle px-2 py-2 sm:px-3 lg:pl-4",
         className,
       )}
     >
-      <IconButton
-        label="Open navigation"
-        className="lg:hidden"
-        onClick={() => openDialog("navigation")}
-      >
-        <Menu size={16} strokeWidth={1.9} />
-      </IconButton>
-      <div className="flex min-w-0 flex-1 items-center gap-2">{children}</div>
-      {actions && <div className="flex shrink-0 items-center gap-1">{actions}</div>}
+      {children}
     </header>
   );
+}
+
+/** Opens the sidebar drawer below the `lg` breakpoint. */
+export function NavigationButton() {
+  return (
+    <IconButton
+      label="Open navigation"
+      className="lg:hidden"
+      onClick={() => openDialog("navigation")}
+    >
+      <Menu size={16} strokeWidth={1.9} />
+    </IconButton>
+  );
+}
+
+export function HeaderDivider({ className }: { className?: string }) {
+  return <span aria-hidden="true" className={cn("mx-1 h-4 w-px shrink-0 bg-line", className)} />;
 }

@@ -1,5 +1,6 @@
 import { Command } from "cmdk";
 import {
+  Check,
   Clock,
   Compass,
   Keyboard,
@@ -12,6 +13,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { copyComponent, copyWithToast } from "../lib/copy";
+import { formatsOf } from "../lib/formats";
 import { MOD } from "../lib/platform";
 import { navigate, type Route, useRoute } from "../lib/router";
 import {
@@ -22,9 +24,12 @@ import {
   useHistory,
   usePreferences,
 } from "../lib/state";
+import { setThemePreference, useTheme } from "../lib/theme";
 import { getComponent, type RegistryItem, registry } from "../registry";
 import { categories, getCategory } from "../registry/categories";
+import { THEME_OPTIONS } from "./ThemeMenu";
 import { CategoryIcon } from "./ui/CategoryIcon";
+import { FormatIcon } from "./ui/FormatIcon";
 import { Kbd, Shortcut } from "./ui/Kbd";
 
 const itemClass =
@@ -83,8 +88,8 @@ export function CommandMenu() {
           void copyComponent(item);
         }
       }}
-      overlayClassName="fixed inset-0 z-50 bg-[rgb(16_17_26/0.18)] data-[state=open]:animate-fade-in"
-      contentClassName="fixed top-[12vh] left-1/2 z-50 w-[min(640px,calc(100vw-24px))] -translate-x-1/2 overflow-hidden rounded-xl border border-line bg-panel shadow-modal outline-hidden data-[state=open]:animate-pop-in"
+      overlayClassName="fixed inset-0 z-50 bg-overlay data-[state=open]:animate-fade-in"
+      contentClassName="fixed top-[12vh] left-1/2 z-50 w-[min(640px,calc(100vw-24px))] -translate-x-1/2 overflow-hidden rounded-xl border border-line bg-raised shadow-modal outline-hidden data-[state=open]:animate-pop-in"
     >
       {open && <CommandMenuBody />}
     </Command.Dialog>
@@ -96,7 +101,9 @@ function CommandMenuBody() {
   const history = useHistory();
   const prefs = usePreferences();
   const route = useRoute();
+  const { preference } = useTheme();
   const searching = search.trim().length > 0;
+  const current = route.name === "component" ? getComponent(route.slug) : undefined;
 
   const run = (action: () => void) => {
     closeDialog();
@@ -142,6 +149,24 @@ function CommandMenuBody() {
         <Command.Empty className="px-3 py-10 text-center text-mini text-ink-3">
           No results for “{search}”.
         </Command.Empty>
+
+        {current && (
+          <Command.Group heading={current.name} className={groupClass}>
+            {formatsOf(current).map((format) => (
+              <Command.Item
+                key={format.id}
+                value={`copy:${format.id}`}
+                keywords={[`Copy ${format.name} code`, "copy", "code", format.name]}
+                onSelect={() => run(() => void copyComponent(current, format.id))}
+                className={itemClass}
+              >
+                <FormatIcon format={format.id} size={15} className="text-ink-3" />
+                Copy {format.name} code
+                <span className="ml-auto text-[12px] text-ink-4">{format.summary}</span>
+              </Command.Item>
+            ))}
+          </Command.Group>
+        )}
 
         {!searching && recent.length > 0 && (
           <Command.Group heading="Recently copied" className={groupClass}>
@@ -225,6 +250,27 @@ function CommandMenuBody() {
             Switch to {prefs.view === "grid" ? "list" : "grid"} view
             <Shortcut keys="v" className="ml-auto" />
           </Command.Item>
+          {THEME_OPTIONS.map(({ value, label, icon: Icon }) => (
+            <Command.Item
+              key={value}
+              value={`theme:${value}`}
+              keywords={[
+                value === "system" ? "Use system theme" : `Switch to ${label.toLowerCase()} theme`,
+                "theme",
+                "appearance",
+                "mode",
+                label,
+              ]}
+              onSelect={() => run(() => setThemePreference(value))}
+              className={itemClass}
+            >
+              <Icon size={16} strokeWidth={1.9} className="text-ink-3" />
+              {value === "system" ? "Use system theme" : `Switch to ${label.toLowerCase()} theme`}
+              {preference === value && (
+                <Check size={15} strokeWidth={2.2} className="ml-auto text-ink-3" />
+              )}
+            </Command.Item>
+          ))}
           <Command.Item
             value="action:copy-link"
             keywords={["Copy link to this page", "share", "url"]}

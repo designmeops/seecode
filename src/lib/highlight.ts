@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { HighlighterCore, ThemedToken } from "shiki/core";
 import type { CodeLanguage } from "../registry/types";
-import { codeTheme } from "./code-theme";
+import { codeThemeDark, codeThemeLight } from "./code-theme";
 
 let highlighter: Promise<HighlighterCore> | null = null;
 const cache = new Map<string, ThemedToken[][]>();
@@ -13,19 +13,25 @@ function getHighlighter(): Promise<HighlighterCore> {
     import("shiki/engine/javascript"),
     import("shiki/langs/tsx.mjs"),
     import("shiki/langs/css.mjs"),
-  ]).then(([core, engine, tsx, css]) =>
+    import("shiki/langs/html.mjs"),
+  ]).then(([core, engine, tsx, css, html]) =>
     core.createHighlighterCore({
-      themes: [codeTheme],
-      langs: [tsx.default, css.default],
+      themes: [codeThemeLight, codeThemeDark],
+      langs: [tsx.default, css.default, html.default],
       engine: engine.createJavaScriptRegexEngine(),
     }),
   );
   return highlighter;
 }
 
-const grammarFor = (language: CodeLanguage) => (language === "css" ? "css" : "tsx");
+const grammarFor = (language: CodeLanguage) =>
+  language === "css" ? "css" : language === "html" ? "html" : "tsx";
 
-/** Returns highlighted lines, or `null` while the highlighter loads. */
+/**
+ * Returns highlighted lines, or `null` while the highlighter loads. Each token
+ * carries both themes' colors as CSS variables (`--shiki-light`, `--shiki-dark`),
+ * so switching the app theme never re-highlights.
+ */
 export function useHighlightedLines(code: string, language: CodeLanguage): ThemedToken[][] | null {
   const key = `${language}\u0000${code}`;
   const [lines, setLines] = useState<{ key: string; lines: ThemedToken[][] } | null>(() => {
@@ -43,7 +49,8 @@ export function useHighlightedLines(code: string, language: CodeLanguage): Theme
       .then((instance) => {
         const { tokens } = instance.codeToTokens(code.replace(/\n$/, ""), {
           lang: grammarFor(language),
-          theme: codeTheme.name!,
+          themes: { light: codeThemeLight.name!, dark: codeThemeDark.name! },
+          defaultColor: false,
         });
         cache.set(key, tokens);
         if (!cancelled) setLines({ key, lines: tokens });

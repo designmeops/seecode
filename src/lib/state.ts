@@ -66,14 +66,12 @@ export interface Preferences {
   view: ViewMode;
   sort: SortMode;
   categoriesOpen: boolean;
-  tagsOpen: boolean;
 }
 
 const defaultPreferences: Preferences = {
   view: "grid",
   sort: "featured",
   categoriesOpen: true,
-  tagsOpen: true,
 };
 
 const isPreferences = (value: unknown): value is Preferences => {
@@ -82,8 +80,7 @@ const isPreferences = (value: unknown): value is Preferences => {
   return (
     (prefs.view === "grid" || prefs.view === "list") &&
     (prefs.sort === "featured" || prefs.sort === "newest" || prefs.sort === "name") &&
-    typeof prefs.categoriesOpen === "boolean" &&
-    typeof prefs.tagsOpen === "boolean"
+    typeof prefs.categoriesOpen === "boolean"
   );
 };
 

@@ -1,10 +1,16 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — a light take on Linear's interface.
- * Custom token names are used on purpose so Tailwind's default palette stays
- * untouched: registry components rely on it and must render exactly as they
- * would in a fresh Tailwind project.
+ * Registry components style themselves with `dark:` utilities. In the dashboard
+ * a preview turns dark when its canvas carries the `dark` class, so a preview's
+ * theme can differ from the app's. In your own project `dark:` follows your setup.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens, modelled on Linear's light and dark themes. Custom names keep
+ * Tailwind's default palette untouched: registry components rely on it and must
+ * render exactly as they would in a fresh Tailwind project.
  */
 @theme {
   --font-sans:
@@ -14,13 +20,26 @@
     "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
     monospace;
 
+  /* Linear's variable-font weights */
+  --font-weight-medium: 510;
+  --font-weight-semibold: 590;
+
   /* Surfaces */
   --color-app: #f5f5f7;
   --color-panel: #ffffff;
+  --color-card: #ffffff;
+  --color-raised: #ffffff;
+  --color-field: #ffffff;
   --color-subtle: #fafafb;
-  --color-muted: #f3f3f5;
+  --color-muted: rgb(15 16 26 / 0.05);
+  --color-thumb: #ffffff;
+  --color-control-hover: #f7f7f9;
   --color-hover: rgb(15 16 26 / 0.045);
   --color-active: rgb(15 16 26 / 0.075);
+  --color-row-hover: #f8f8fa;
+  --color-row-focus: #f3f3f6;
+  --color-group: #f8f8fa;
+  --color-overlay: rgb(16 17 26 / 0.2);
 
   /* Lines */
   --color-line: #e6e6ea;
@@ -33,32 +52,28 @@
   --color-ink-3: #6b6f79;
   --color-ink-4: #9a9ea8;
 
-  /* Brand — Linear indigo */
+  /* Brand: Linear indigo. `brand` fills controls; `brand-ink` is for text and icons. */
   --color-brand: #5e6ad2;
   --color-brand-hover: #5461cb;
+  --color-brand-ink: #5e6ad2;
   --color-brand-soft: #eff0fc;
   --color-brand-line: #d9dcf6;
 
   /* Status */
   --color-good: #26a061;
   --color-good-soft: #e9f7ef;
+  --color-star: #e5a00d;
+  --color-info: #2f80ed;
+  --color-danger: #e5484d;
+
+  /* Code */
+  --color-code-fg: #2b2e36;
+  --color-code-type: #0d7d8c;
 
   --text-tiny: 0.6875rem;
   --text-tiny--line-height: 1rem;
   --text-mini: 0.8125rem;
   --text-mini--line-height: 1.25rem;
-
-  --shadow-tiny: 0 1px 1px 0 rgb(16 17 26 / 0.04);
-  --shadow-control: 0 1px 2px 0 rgb(16 17 26 / 0.06);
-  --shadow-card: 0 1px 2px rgb(16 17 26 / 0.04);
-  --shadow-card-hover: 0 1px 2px rgb(16 17 26 / 0.04), 0 6px 20px -4px rgb(16 17 26 / 0.08);
-  --shadow-panel: 0 1px 2px rgb(16 17 26 / 0.03), 0 0 0 1px rgb(16 17 26 / 0.02);
-  --shadow-pop:
-    0 0 0 1px rgb(16 17 26 / 0.06), 0 4px 8px -2px rgb(16 17 26 / 0.06),
-    0 16px 32px -8px rgb(16 17 26 / 0.12);
-  --shadow-modal:
-    0 0 0 1px rgb(16 17 26 / 0.07), 0 8px 16px -4px rgb(16 17 26 / 0.08),
-    0 32px 64px -12px rgb(16 17 26 / 0.22);
 
   --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
 
@@ -116,6 +131,112 @@
   }
 }
 
+/* Shadows change shape between themes (soft drop shadows vs. edge highlights). */
+:root {
+  --sc-shadow-tiny: 0 1px 1px 0 rgb(16 17 26 / 0.04);
+  --sc-shadow-control: 0 1px 2px 0 rgb(16 17 26 / 0.06);
+  --sc-shadow-card: 0 1px 2px rgb(16 17 26 / 0.04);
+  --sc-shadow-card-hover: 0 1px 2px rgb(16 17 26 / 0.04), 0 6px 20px -4px rgb(16 17 26 / 0.09);
+  --sc-shadow-panel: 0 1px 2px rgb(16 17 26 / 0.03), 0 0 0 1px rgb(16 17 26 / 0.02);
+  --sc-shadow-thumb: 0 1px 2px rgb(16 17 26 / 0.08), 0 0 0 1px rgb(16 17 26 / 0.05);
+  --sc-shadow-pop:
+    0 0 0 1px rgb(16 17 26 / 0.06), 0 4px 8px -2px rgb(16 17 26 / 0.06),
+    0 16px 32px -8px rgb(16 17 26 / 0.12);
+  --sc-shadow-modal:
+    0 0 0 1px rgb(16 17 26 / 0.07), 0 8px 16px -4px rgb(16 17 26 / 0.08),
+    0 32px 64px -12px rgb(16 17 26 / 0.22);
+  --sc-selection: rgb(94 106 210 / 0.18);
+  --sc-scrollbar: rgb(16 17 26 / 0.14);
+}
+
+/* Linear's dark theme: near-black frame, a slightly lifted panel, hairline borders. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-app: #0b0b0c;
+  --color-panel: #111113;
+  --color-card: #151517;
+  --color-raised: #1b1c1f;
+  --color-field: rgb(255 255 255 / 0.03);
+  --color-subtle: #161618;
+  --color-muted: rgb(0 0 0 / 0.28);
+  --color-thumb: #2a2b30;
+  --color-control-hover: #1c1d20;
+  --color-hover: rgb(255 255 255 / 0.045);
+  --color-active: rgb(255 255 255 / 0.08);
+  --color-row-hover: rgb(255 255 255 / 0.025);
+  --color-row-focus: rgb(255 255 255 / 0.05);
+  --color-group: #141416;
+  --color-overlay: rgb(0 0 0 / 0.55);
+
+  --color-line: #242529;
+  --color-line-subtle: #1c1d20;
+  --color-line-strong: #303237;
+
+  --color-ink: #eeeff1;
+  --color-ink-2: #c4c6cc;
+  --color-ink-3: #8a8f98;
+  --color-ink-4: #5f636b;
+
+  --color-brand: #5e6ad2;
+  --color-brand-hover: #6a75da;
+  --color-brand-ink: #8d96f0;
+  --color-brand-soft: rgb(94 106 210 / 0.16);
+  --color-brand-line: rgb(94 106 210 / 0.4);
+
+  --color-good: #4cb782;
+  --color-good-soft: rgb(76 183 130 / 0.14);
+  --color-star: #f2c94c;
+  --color-info: #4ea7fc;
+  --color-danger: #eb5757;
+
+  --color-code-fg: #d4d6dc;
+  --color-code-type: #5fc4d4;
+
+  --sc-shadow-tiny: inset 0 1px 0 rgb(255 255 255 / 0.03);
+  --sc-shadow-control: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 1px 2px rgb(0 0 0 / 0.3);
+  --sc-shadow-card: inset 0 1px 0 rgb(255 255 255 / 0.025);
+  --sc-shadow-card-hover: inset 0 1px 0 rgb(255 255 255 / 0.04), 0 8px 24px -6px rgb(0 0 0 / 0.55);
+  --sc-shadow-panel: 0 0 0 1px rgb(0 0 0 / 0.25);
+  --sc-shadow-thumb: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 2px rgb(0 0 0 / 0.45);
+  --sc-shadow-pop:
+    0 0 0 1px rgb(255 255 255 / 0.04), 0 4px 12px rgb(0 0 0 / 0.35),
+    0 16px 40px -8px rgb(0 0 0 / 0.6);
+  --sc-shadow-modal: 0 0 0 1px rgb(255 255 255 / 0.05), 0 24px 64px -12px rgb(0 0 0 / 0.75);
+  --sc-selection: rgb(94 106 210 / 0.38);
+  --sc-scrollbar: rgb(255 255 255 / 0.14);
+}
+
+@utility shadow-tiny {
+  box-shadow: var(--sc-shadow-tiny);
+}
+@utility shadow-control {
+  box-shadow: var(--sc-shadow-control);
+}
+@utility shadow-card {
+  box-shadow: var(--sc-shadow-card);
+}
+@utility shadow-card-hover {
+  box-shadow: var(--sc-shadow-card-hover);
+}
+@utility shadow-panel {
+  box-shadow: var(--sc-shadow-panel);
+}
+@utility shadow-thumb {
+  box-shadow: var(--sc-shadow-thumb);
+}
+@utility shadow-pop {
+  box-shadow: var(--sc-shadow-pop);
+}
+@utility shadow-modal {
+  box-shadow: var(--sc-shadow-modal);
+}
+
+@utility scrollbar-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sc-scrollbar) transparent;
+}
+
 @layer base {
   html,
   body,
@@ -140,7 +261,7 @@
   }
 
   ::selection {
-    background: rgb(94 106 210 / 0.18);
+    background: var(--sc-selection);
   }
 
   button:not(:disabled),
@@ -151,11 +272,15 @@
 
 @layer components {
   /*
-   * Live previews render registry components in a neutral context that matches
-   * a fresh page, so what you see is what you get after pasting the code.
+   * Live previews render registry components on their own canvas that matches a
+   * fresh page, so what you see is what you get after pasting the code. The
+   * canvas has its own theme: add `dark` to render the component's dark variant.
    */
   .preview-root {
     color: #09090b;
+    background-color: #fafafa;
+    background-image: radial-gradient(circle at 1px 1px, rgb(16 17 26 / 0.085) 1px, transparent 0);
+    background-size: 14px 14px;
     font-size: 16px;
     line-height: 1.5;
     font-weight: 400;
@@ -164,28 +289,32 @@
     text-align: left;
   }
 
-  /* Code view: horizontal scroll lives on the block, line numbers stay pinned. */
+  .preview-root.dark {
+    color: #fafafa;
+    color-scheme: dark;
+    background-color: #0d0d0f;
+    background-image: radial-gradient(
+      circle at 1px 1px,
+      rgb(255 255 255 / 0.065) 1px,
+      transparent 0
+    );
+  }
+
+  /* Highlighted code carries both themes' colors as variables (see lib/highlight.ts). */
+  .code-token {
+    color: var(--shiki-light);
+    font-style: var(--shiki-light-font-style, normal);
+  }
+
+  :root[data-theme="dark"] .code-token {
+    color: var(--shiki-dark);
+    font-style: var(--shiki-dark-font-style, normal);
+  }
+
   .code-scroll {
     scrollbar-width: thin;
-    scrollbar-color: rgb(16 17 26 / 0.16) transparent;
+    scrollbar-color: var(--sc-scrollbar) transparent;
   }
-}
-
-@utility bg-dots {
-  background-color: var(--color-subtle);
-  background-image: radial-gradient(circle at 1px 1px, rgb(16 17 26 / 0.085) 1px, transparent 0);
-  background-size: 14px 14px;
-}
-
-@utility bg-dots-dark {
-  background-color: #0b0b0e;
-  background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.07) 1px, transparent 0);
-  background-size: 14px 14px;
-}
-
-@utility scrollbar-subtle {
-  scrollbar-width: thin;
-  scrollbar-color: rgb(16 17 26 / 0.14) transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {

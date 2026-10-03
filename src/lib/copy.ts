@@ -1,25 +1,36 @@
-import type { RegistryItem } from "../registry/types";
+import type { FormatId, RegistryItem } from "../registry/types";
 import { copyText } from "./clipboard";
+import { defaultFormatFor, getFormat, preferredFormatStore } from "./formats";
 import { recordCopy } from "./state";
 import { createStore } from "./store";
 import { toast } from "./toast";
 
 /**
- * The most recent successful copy, so every button tied to the same file can
+ * The most recent successful copy, so every button tied to the same code can
  * flash "Copied" — including when the copy came from a keyboard shortcut.
  */
 export const copiedStore = createStore<{ key: string; at: number } | null>(null);
 
-export const copyKey = (item: RegistryItem, fileIndex = 0) => `${item.slug}:${fileIndex}`;
+export const copyKey = (item: RegistryItem, format: FormatId) => `${item.slug}:${format}`;
 
-/** Copies a component file (the main source by default) and reports the result. */
-export async function copyComponent(item: RegistryItem, fileIndex = 0): Promise<boolean> {
-  const file = item.files[fileIndex] ?? item.files[0];
+/**
+ * Copies one format of a component (the last-used one by default), reports the
+ * result and remembers the format for next time.
+ */
+export async function copyComponent(
+  item: RegistryItem,
+  format: FormatId = defaultFormatFor(item),
+): Promise<boolean> {
+  const resolved = item.formats[format] ? format : "nextjs";
+  const file = item.formats[resolved]!;
   return copyWithToast(file.code, {
-    key: copyKey(item, fileIndex),
-    title: `Copied ${file.name}`,
-    description: `${item.name} · ${item.id}`,
-    onCopied: () => recordCopy(item.slug),
+    key: copyKey(item, resolved),
+    title: `Copied ${getFormat(resolved).name} code`,
+    description: `${item.name} · ${file.name}`,
+    onCopied: () => {
+      recordCopy(item.slug);
+      preferredFormatStore.set(resolved);
+    },
   });
 }
 

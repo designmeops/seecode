@@ -7,11 +7,15 @@ type Size = "xs" | "sm" | "md";
 export const focusRing =
   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand";
 
+/** For controls inside a clipped group, where an outer ring would be cut off. */
+export const insetFocusRing =
+  "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-brand";
+
 const variants: Record<Variant, string> = {
   primary:
-    "bg-brand text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.18),0_1px_2px_rgb(16_17_26/0.18)] hover:bg-brand-hover",
+    "bg-brand text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.16),0_1px_2px_rgb(0_0_0/0.18)] hover:bg-brand-hover",
   secondary:
-    "border border-line bg-panel text-ink-2 shadow-control hover:border-line-strong hover:bg-subtle hover:text-ink",
+    "border border-line bg-card text-ink-2 shadow-control hover:border-line-strong hover:bg-control-hover hover:text-ink",
   ghost: "text-ink-3 hover:bg-hover hover:text-ink",
 };
 

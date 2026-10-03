@@ -6,35 +6,41 @@ import {
   CircleCheck,
   Eye,
   Link2,
+  Moon,
   RefreshCw,
   RotateCcw,
   SearchX,
   Sparkles,
+  Sun,
 } from "lucide-react";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import { CodeBlock, type CodeTab } from "../components/CodeBlock";
 import { copyComponentLink } from "../components/ComponentMenu";
-import { CopyButton } from "../components/CopyButton";
 import { EmptyState } from "../components/EmptyState";
 import { FavoriteButton, toggleFavoriteWithToast } from "../components/FavoriteButton";
-import { PageHeader } from "../components/layout/PageHeader";
+import { FormatCopyButtons } from "../components/FormatCopyButtons";
+import { HeaderDivider, NavigationButton, PageHeader } from "../components/layout/PageHeader";
 import { ScrollArea } from "../components/layout/ScrollArea";
 import { Preview } from "../components/Preview";
 import { AuthorAvatar } from "../components/ui/Avatar";
 import { Button, IconButton } from "../components/ui/Button";
 import { CategoryIcon } from "../components/ui/CategoryIcon";
+import { FormatIcon } from "../components/ui/FormatIcon";
 import { TagPill } from "../components/ui/Pill";
+import { Segmented } from "../components/ui/Segmented";
 import { Tooltip } from "../components/ui/Tooltip";
 import { useHotkeys } from "../hooks/useHotkeys";
-import { cn } from "../lib/cn";
 import { copyComponent, copyKey, copyWithToast } from "../lib/copy";
-import { countLines, formatDate, formatRelative, isRecent } from "../lib/format";
+import { formatDate, formatRelative, isRecent } from "../lib/format";
+import { defaultFormatFor, formatsOf, getFormat } from "../lib/formats";
 import { lastBrowseRoute, navigate, toHref } from "../lib/router";
 import { sortItems } from "../lib/search";
 import { useHistory, usePreferences } from "../lib/state";
+import { type Theme, useTheme } from "../lib/theme";
 import { getComponent, type RegistryItem, registry } from "../registry";
 import { getAuthor } from "../registry/authors";
 import { getCategory } from "../registry/categories";
+import type { FormatId } from "../registry/types";
 
 export function ComponentPage({ slug }: { slug: string }) {
   const item = getComponent(slug);
@@ -42,6 +48,7 @@ export function ComponentPage({ slug }: { slug: string }) {
     return (
       <>
         <PageHeader>
+          <NavigationButton />
           <h1 className="text-[13.5px] font-medium text-ink">Not found</h1>
         </PageHeader>
         <EmptyState
@@ -78,11 +85,14 @@ function goBack(item: RegistryItem) {
 function ComponentDetail({ item }: { item: RegistryItem }) {
   const prefs = usePreferences();
   const history = useHistory();
+  const app = useTheme();
   const [replayKey, setReplayKey] = useState(0);
+  const [canvas, setCanvas] = useState<Theme | null>(null);
+  const [format, setFormat] = useState<FormatId>(() => defaultFormatFor(item));
   const category = getCategory(item.category);
   const author = getAuthor(item.author);
-  const [mainFile] = item.files;
   const record = history.find((entry) => entry.slug === item.slug);
+  const canvasTheme = canvas ?? app.theme;
 
   const ordered = useMemo(() => sortItems(registry, prefs.sort), [prefs.sort]);
   const index = ordered.findIndex((other) => other.slug === item.slug);
@@ -98,7 +108,8 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
     target && navigate({ name: "component", slug: target.slug });
 
   useHotkeys({
-    c: () => void copyComponent(item),
+    // Copies what the code viewer shows.
+    c: () => void copyComponent(item, format),
     f: () => toggleFavoriteWithToast(item),
     j: () => go(next),
     k: () => go(previous),
@@ -106,193 +117,191 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
     escape: () => goBack(item),
   });
 
-  const tabs: CodeTab[] = [
-    ...item.files.map((file, fileIndex) => ({
-      id: file.name,
-      label: file.name,
+  const tabs: CodeTab[] = formatsOf(item).map((meta) => {
+    const file = item.formats[meta.id]!;
+    return {
+      id: meta.id,
+      label: meta.name,
+      icon: <FormatIcon format={meta.id} size={13} />,
+      fileName: file.name,
       language: file.language,
       code: file.code,
-      copyKey: copyKey(item, fileIndex),
-      onCopy: () => copyComponent(item, fileIndex),
-      copyShortcut: fileIndex === 0 ? "c" : undefined,
-    })),
-    {
-      id: "usage",
-      label: "Usage",
-      language: "tsx",
-      code: item.usage,
-      copyKey: `${item.slug}:usage`,
-      onCopy: () =>
-        copyWithToast(item.usage, {
-          key: `${item.slug}:usage`,
-          title: "Copied usage example",
-          description: item.name,
-        }),
-    },
-  ];
+      copyKey: copyKey(item, meta.id),
+      onCopy: () => copyComponent(item, meta.id),
+      copyTooltip: `Copy ${meta.name} code`,
+      copyShortcut: "c",
+    };
+  });
 
   const status = isRecent(item.createdAt)
-    ? { label: "New", icon: <Sparkles size={14} strokeWidth={1.9} className="text-brand" /> }
+    ? { label: "New", icon: <Sparkles size={14} strokeWidth={1.9} className="text-brand-ink" /> }
     : isRecent(item.updatedAt)
       ? {
           label: "Recently updated",
-          icon: <RefreshCw size={14} strokeWidth={1.9} className="text-[#2f80ed]" />,
+          icon: <RefreshCw size={14} strokeWidth={1.9} className="text-info" />,
         }
       : {
           label: "Stable",
           icon: <CircleCheck size={14} strokeWidth={1.9} className="text-good" />,
         };
 
-  const dependencies = item.dependencies ?? [];
-
   return (
     <>
-      <PageHeader
-        actions={
-          <>
-            <FavoriteButton item={item} size="sm" />
-            <Tooltip label="Copy link">
-              <IconButton label="Copy link" onClick={() => void copyComponentLink(item)}>
-                <Link2 size={15} strokeWidth={1.9} />
-              </IconButton>
-            </Tooltip>
-            <span className="mx-1 hidden h-4 w-px bg-line sm:block" />
-            <span className="hidden px-1 text-[12px] text-ink-4 tabular-nums sm:block">
-              {index + 1} / {ordered.length}
+      <PageHeader>
+        <div className="flex min-w-0 flex-1 items-center gap-2">
+          <NavigationButton />
+          <Tooltip label="Back" shortcut="escape">
+            <IconButton label="Back" className="max-lg:hidden" onClick={() => goBack(item)}>
+              <ArrowLeft size={15} strokeWidth={1.9} />
+            </IconButton>
+          </Tooltip>
+          <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 text-mini">
+            <a
+              href={toHref({ name: "explore" })}
+              className="hidden shrink-0 text-ink-3 transition-colors hover:text-ink md:block"
+            >
+              Explore
+            </a>
+            <ChevronRight size={13} className="hidden shrink-0 text-ink-4 md:block" />
+            <a
+              href={toHref({ name: "category", category: item.category })}
+              className="flex shrink-0 items-center gap-1.5 text-ink-3 transition-colors hover:text-ink"
+            >
+              <CategoryIcon category={item.category} />
+              <span className="hidden md:inline">{category.name}</span>
+            </a>
+            <ChevronRight size={13} className="shrink-0 text-ink-4" />
+            <span aria-current="page" className="truncate font-medium text-ink">
+              {item.name}
             </span>
-            <Tooltip label="Previous component" shortcut="k">
-              <IconButton
-                label="Previous component"
-                disabled={!previous}
-                onClick={() => go(previous)}
-              >
-                <ChevronUp size={16} strokeWidth={1.9} />
-              </IconButton>
-            </Tooltip>
-            <Tooltip label="Next component" shortcut="j">
-              <IconButton label="Next component" disabled={!next} onClick={() => go(next)}>
-                <ChevronDown size={16} strokeWidth={1.9} />
-              </IconButton>
-            </Tooltip>
-          </>
-        }
-      >
-        <Tooltip label="Back" shortcut="escape">
-          <IconButton label="Back" className="max-lg:hidden" onClick={() => goBack(item)}>
-            <ArrowLeft size={15} strokeWidth={1.9} />
-          </IconButton>
-        </Tooltip>
-        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center gap-1 text-mini">
-          <a
-            href={toHref({ name: "explore" })}
-            className="hidden shrink-0 text-ink-3 transition-colors hover:text-ink sm:block"
-          >
-            Explore
-          </a>
-          <ChevronRight size={13} className="hidden shrink-0 text-ink-4 sm:block" />
-          <a
-            href={toHref({ name: "category", category: item.category })}
-            className="flex shrink-0 items-center gap-1.5 text-ink-3 transition-colors hover:text-ink"
-          >
-            <CategoryIcon category={item.category} />
-            <span className="hidden md:inline">{category.name}</span>
-          </a>
-          <ChevronRight size={13} className="shrink-0 text-ink-4" />
-          <span aria-current="page" className="truncate font-medium text-ink">
-            {item.name}
+            <span className="ml-1 hidden shrink-0 text-[12px] text-ink-4 tabular-nums sm:inline">
+              {item.id}
+            </span>
+          </nav>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1">
+          <FormatCopyButtons item={item} labels="xl" />
+          <HeaderDivider />
+          <FavoriteButton item={item} size="sm" />
+          <Tooltip label="Copy link">
+            <IconButton label="Copy link" onClick={() => void copyComponentLink(item)}>
+              <Link2 size={15} strokeWidth={1.9} />
+            </IconButton>
+          </Tooltip>
+          <HeaderDivider className="max-sm:hidden" />
+          <span className="hidden px-1 text-[12px] text-ink-4 tabular-nums xl:block">
+            {index + 1} / {ordered.length}
           </span>
-          <span className="ml-1 hidden shrink-0 text-[12px] text-ink-4 tabular-nums sm:inline">
-            {item.id}
-          </span>
-        </nav>
+          <Tooltip label="Previous component" shortcut="k">
+            <IconButton
+              label="Previous component"
+              disabled={!previous}
+              onClick={() => go(previous)}
+              className="max-sm:hidden"
+            >
+              <ChevronUp size={16} strokeWidth={1.9} />
+            </IconButton>
+          </Tooltip>
+          <Tooltip label="Next component" shortcut="j">
+            <IconButton
+              label="Next component"
+              disabled={!next}
+              onClick={() => go(next)}
+              className="max-sm:hidden"
+            >
+              <ChevronDown size={16} strokeWidth={1.9} />
+            </IconButton>
+          </Tooltip>
+        </div>
       </PageHeader>
 
       <ScrollArea routeKey={`component:${item.slug}`}>
         <div className="grid min-h-full xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="min-w-0 px-4 py-6 sm:px-8 sm:py-8">
-            <div className="mx-auto max-w-[920px]">
-              <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-4">
-                <div className="min-w-0">
-                  <div className="mb-2.5 flex items-center gap-2 text-[12.5px] text-ink-3">
-                    <CategoryIcon category={item.category} />
-                    {category.name}
-                    <span className="text-ink-4">·</span>
-                    <AuthorAvatar author={item.author} />
-                    {author.name}
-                  </div>
-                  <h1 className="text-[24px] leading-8 font-semibold tracking-[-0.022em] text-ink">
-                    {item.name}
-                  </h1>
-                  <p className="mt-1.5 max-w-2xl text-[14px] leading-[22px] text-ink-3">
-                    {item.description}
-                  </p>
-                </div>
-                <CopyButton
-                  variant="primary"
-                  size="md"
-                  copyKey={copyKey(item)}
-                  onCopy={() => copyComponent(item)}
-                  label="Copy code"
-                  tooltip={`Copy ${mainFile.name}`}
-                  shortcut="c"
-                />
-              </div>
+            <div className="mx-auto max-w-[960px]">
+              <h1 className="text-[24px] leading-8 font-semibold tracking-[-0.022em] text-ink">
+                {item.name}
+              </h1>
+              <p className="mt-1.5 max-w-2xl text-[14px] leading-[22px] text-ink-3">
+                {item.description}
+              </p>
 
               <section
                 aria-label="Preview"
-                className="mt-7 overflow-hidden rounded-xl border border-line shadow-card"
+                className="mt-6 overflow-hidden rounded-xl border border-line shadow-card"
               >
-                <div className="flex h-10 items-center gap-2 border-b border-line bg-panel pr-2 pl-3">
+                <div className="flex h-10 items-center gap-2 border-b border-line bg-card pr-2 pl-3">
                   <Eye size={14} strokeWidth={1.9} className="text-ink-3" />
                   <span className="text-[12.5px] font-medium text-ink-2">Preview</span>
-                  <span className="text-[12px] text-ink-4">· Interactive</span>
-                  <Tooltip label="Replay preview" shortcut="r">
-                    <IconButton
-                      label="Replay preview"
-                      className="ml-auto"
-                      onClick={() => setReplayKey((key) => key + 1)}
-                    >
-                      <RotateCcw size={14} strokeWidth={1.9} />
-                    </IconButton>
-                  </Tooltip>
+                  <span className="hidden text-[12px] text-ink-4 sm:inline">· Interactive</span>
+                  <div className="ml-auto flex items-center gap-1.5">
+                    <Segmented
+                      label="Canvas"
+                      iconOnly
+                      value={canvasTheme}
+                      onChange={setCanvas}
+                      options={[
+                        {
+                          value: "light",
+                          label: "Light canvas",
+                          icon: <Sun size={13} strokeWidth={1.9} />,
+                        },
+                        {
+                          value: "dark",
+                          label: "Dark canvas",
+                          icon: <Moon size={13} strokeWidth={1.9} />,
+                        },
+                      ]}
+                    />
+                    <Tooltip label="Replay preview" shortcut="r">
+                      <IconButton
+                        label="Replay preview"
+                        onClick={() => setReplayKey((key) => key + 1)}
+                      >
+                        <RotateCcw size={14} strokeWidth={1.9} />
+                      </IconButton>
+                    </Tooltip>
+                  </div>
                 </div>
                 <Preview
                   item={item}
                   variant="canvas"
+                  theme={canvasTheme}
                   replayKey={replayKey}
                   className="px-4 py-12 sm:px-8"
                   style={{ minHeight: item.preview.height ?? 360 }}
                 />
               </section>
 
-              <Section title="Code">
-                <CodeBlock key={item.slug} tabs={tabs} />
+              <Section
+                title="Code"
+                description="The same component for each platform — pick yours and copy it."
+              >
+                <CodeBlock
+                  key={item.slug}
+                  label="Platforms"
+                  tabs={tabs}
+                  value={format}
+                  onValueChange={(id) => setFormat(id as FormatId)}
+                />
               </Section>
 
-              <Section title="Installation">
-                <ol className="space-y-3">
-                  <Step index={1}>
-                    Copy <InlineCode>{mainFile.name}</InlineCode> into your project — for example{" "}
-                    <InlineCode>components/{mainFile.name}</InlineCode>.
-                  </Step>
-                  <Step index={2}>
-                    It needs React 19 and Tailwind CSS v4
-                    {dependencies.length > 0 ? (
-                      <>
-                        , plus <InlineCode>npm i {dependencies.join(" ")}</InlineCode>.
-                      </>
-                    ) : (
-                      <> — no other dependencies.</>
-                    )}
-                  </Step>
-                  <Step index={3}>
-                    Import it and render it. The Usage tab has a complete example.
-                  </Step>
-                </ol>
+              <Section title={`Use it in ${getFormat(format).name}`}>
+                <Installation item={item} format={format} />
               </Section>
 
               {item.props && item.props.length > 0 && (
-                <Section title="Props">
+                <Section
+                  title="Props"
+                  description={
+                    format === "webflow"
+                      ? "The Next.js and Framer versions take these props. In Webflow, edit the HTML instead."
+                      : format === "framer"
+                        ? "Each prop is a property control in Framer’s right panel."
+                        : undefined
+                  }
+                >
                   <div className="overflow-x-auto rounded-xl border border-line">
                     <table className="w-full min-w-[560px] text-left text-mini">
                       <thead className="bg-subtle text-[12px] text-ink-3">
@@ -309,7 +318,7 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
                             <td className="px-4 py-2.5 font-mono text-[12px] whitespace-nowrap text-ink">
                               {prop.name}
                             </td>
-                            <td className="px-4 py-2.5 font-mono text-[12px] text-[#0d7d8c]">
+                            <td className="px-4 py-2.5 font-mono text-[12px] text-code-type">
                               {prop.type}
                             </td>
                             <td className="px-4 py-2.5 font-mono text-[12px] whitespace-nowrap text-ink-3">
@@ -328,7 +337,7 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
 
           <aside
             aria-label="Properties"
-            className="border-t border-line-subtle bg-[#fbfbfc] px-5 py-6 xl:border-t-0 xl:border-l"
+            className="border-t border-line-subtle bg-subtle px-5 py-6 xl:border-t-0 xl:border-l"
           >
             <PanelTitle>Properties</PanelTitle>
             <dl className="mt-2">
@@ -347,20 +356,25 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
               </Property>
               <Property label="Author">
                 <AuthorAvatar author={item.author} size="sm" />
-                <span className="shrink-0">{author.name}</span>
-                <span className="min-w-0 truncate text-ink-4">{author.handle}</span>
+                <span className="truncate" title={author.handle}>
+                  {author.name}
+                </span>
               </Property>
-              <Property label="Framework">React 19</Property>
-              <Property label="Styling">Tailwind CSS v4</Property>
-              <Property label="Dependencies">
-                {dependencies.length ? dependencies.join(", ") : "None"}
+              <Property label="Platforms" align="start">
+                <ul className="flex flex-col gap-1.5 py-1.5">
+                  {formatsOf(item).map((meta) => (
+                    <li key={meta.id} className="flex items-center gap-2" title={meta.summary}>
+                      <FormatIcon format={meta.id} size={13} className="text-ink-2" />
+                      {meta.name}
+                    </li>
+                  ))}
+                </ul>
               </Property>
               <Property label="Version">
                 <span className="font-mono text-[12px]">v{item.version}</span>
               </Property>
               <Property label="Published">{formatDate(item.createdAt)}</Property>
               {item.updatedAt && <Property label="Updated">{formatDate(item.updatedAt)}</Property>}
-              <Property label="Size">{countLines(mainFile.code)} lines</Property>
               <Property label="License">MIT</Property>
             </dl>
 
@@ -389,7 +403,7 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
               <>
                 <Divider />
                 <PanelTitle>Related</PanelTitle>
-                <ul className="mt-1.5 -mx-2">
+                <ul className="-mx-2 mt-1.5">
                   {related.map((other) => (
                     <li key={other.slug}>
                       <a
@@ -414,11 +428,95 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
   );
 }
 
-function Section({ title, children }: { title: string; children: ReactNode }) {
+/** Platform-specific steps for the selected code tab. */
+function Installation({ item, format }: { item: RegistryItem; format: FormatId }) {
+  const file = item.formats[format] ?? item.formats.nextjs;
+
+  if (format === "framer") {
+    const name = file.name.replace(/\.tsx$/, "");
+    return (
+      <ol className="space-y-3">
+        <Step index={1}>
+          In Framer, open <strong className="font-medium text-ink">Assets</strong>, click{" "}
+          <InlineCode>+</InlineCode> next to Code and create a new code file named{" "}
+          <InlineCode>{name}</InlineCode>.
+        </Step>
+        <Step index={2}>Replace the file’s contents with the Framer code and save.</Step>
+        <Step index={3}>
+          Drag <InlineCode>{name}</InlineCode> from Assets onto the canvas, then edit its content in
+          the property controls on the right.
+        </Step>
+      </ol>
+    );
+  }
+
+  if (format === "webflow") {
+    return (
+      <ol className="space-y-3">
+        <Step index={1}>
+          In the Webflow Designer, drag a{" "}
+          <strong className="font-medium text-ink">Code Embed</strong> element (Add panel →
+          Elements) to where the section should go.
+        </Step>
+        <Step index={2}>
+          Paste the Webflow code and save. Every class starts with <InlineCode>sc-</InlineCode>, so
+          it never restyles the rest of your site.
+        </Step>
+        <Step index={3}>Edit the text in the HTML, then publish.</Step>
+      </ol>
+    );
+  }
+
+  const usageKey = `${item.slug}:usage`;
+  return (
+    <ol className="space-y-3">
+      <Step index={1}>
+        Copy <InlineCode>{file.name}</InlineCode> into your project — for example{" "}
+        <InlineCode>components/{file.name}</InlineCode>.
+      </Step>
+      <Step index={2}>It needs React 19 and Tailwind CSS v4 — no other dependencies.</Step>
+      <Step index={3}>
+        <span>Import it and render it:</span>
+        <CodeBlock
+          className="mt-3"
+          label="Example"
+          tabs={[
+            {
+              id: "example",
+              label: "Example",
+              fileName: "page.tsx",
+              language: "tsx",
+              code: item.usage,
+              copyKey: usageKey,
+              copyTooltip: "Copy example",
+              onCopy: () =>
+                copyWithToast(item.usage, {
+                  key: usageKey,
+                  title: "Copied usage example",
+                  description: item.name,
+                }),
+            },
+          ]}
+        />
+      </Step>
+    </ol>
+  );
+}
+
+function Section({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
   return (
     <section className="mt-9">
-      <h2 className="mb-3 text-[14px] font-semibold tracking-[-0.01em] text-ink">{title}</h2>
-      {children}
+      <h2 className="text-[14px] font-semibold tracking-[-0.01em] text-ink">{title}</h2>
+      {description && <p className="mt-0.5 text-[12.5px] text-ink-3">{description}</p>}
+      <div className="mt-3">{children}</div>
     </section>
   );
 }
@@ -426,10 +524,10 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function Step({ index, children }: { index: number; children: ReactNode }) {
   return (
     <li className="flex gap-3 text-mini leading-6 text-ink-2">
-      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-line bg-subtle text-[11px] font-medium text-ink-3 tabular-nums">
+      <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-line bg-card text-[11px] font-medium text-ink-3 tabular-nums">
         {index}
       </span>
-      <span>{children}</span>
+      <div className="min-w-0 flex-1">{children}</div>
     </li>
   );
 }
@@ -446,13 +544,27 @@ function PanelTitle({ children }: { children: ReactNode }) {
   return <h2 className="text-[12px] font-medium text-ink-3">{children}</h2>;
 }
 
-function Property({ label, children }: { label: string; children: ReactNode }) {
+function Property({
+  label,
+  align = "center",
+  children,
+}: {
+  label: string;
+  align?: "center" | "start";
+  children: ReactNode;
+}) {
   return (
-    <div className="flex min-h-8 items-center gap-2">
-      <dt className="w-[92px] shrink-0 text-[12.5px] text-ink-3">{label}</dt>
-      <dd className={cn("flex min-w-0 flex-1 items-center gap-1.5 text-mini text-ink")}>
-        {children}
-      </dd>
+    <div className={align === "center" ? "flex min-h-8 items-center gap-2" : "flex gap-2"}>
+      <dt
+        className={
+          align === "center"
+            ? "w-[92px] shrink-0 text-[12.5px] text-ink-3"
+            : "flex h-8 w-[92px] shrink-0 items-center text-[12.5px] text-ink-3"
+        }
+      >
+        {label}
+      </dt>
+      <dd className="flex min-w-0 flex-1 items-center gap-1.5 text-mini text-ink">{children}</dd>
     </div>
   );
 }

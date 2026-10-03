@@ -6,12 +6,12 @@ describe("parseHash", () => {
     ["", { name: "explore" }],
     ["#", { name: "explore" }],
     ["#/", { name: "explore" }],
-    ["#/category/buttons", { name: "category", category: "buttons" }],
+    ["#/category/cards", { name: "category", category: "cards" }],
     ["#/tag/animated", { name: "tag", tag: "animated" }],
     ["#/tag/Animated", { name: "tag", tag: "animated" }],
     ["#/favorites", { name: "favorites" }],
     ["#/recent", { name: "recent" }],
-    ["#/component/shimmer-button", { name: "component", slug: "shimmer-button" }],
+    ["#/component/deal-card", { name: "component", slug: "deal-card" }],
     ["#/category/not-a-category", { name: "not-found" }],
     ["#/component", { name: "not-found" }],
     ["#/favorites/extra", { name: "not-found" }],
@@ -29,11 +29,11 @@ describe("parseHash", () => {
 describe("toHref", () => {
   it.each<Route>([
     { name: "explore" },
-    { name: "category", category: "overlays" },
+    { name: "category", category: "data-display" },
     { name: "tag", tag: "dark mode" },
     { name: "favorites" },
     { name: "recent" },
-    { name: "component", slug: "otp-input" },
+    { name: "component", slug: "people-list" },
   ])("round-trips %o", (route) => {
     expect(parseHash(toHref(route))).toEqual(route);
   });

@@ -4,7 +4,7 @@ import { CommandMenu } from "./components/CommandMenu";
 import { PublishDialog, ShortcutsDialog } from "./components/Dialogs";
 import { EmptyState } from "./components/EmptyState";
 import { AppShell } from "./components/layout/AppShell";
-import { PageHeader } from "./components/layout/PageHeader";
+import { NavigationButton, PageHeader } from "./components/layout/PageHeader";
 import { Toaster } from "./components/Toaster";
 import { Button } from "./components/ui/Button";
 import { TooltipProvider } from "./components/ui/Tooltip";
@@ -73,6 +73,7 @@ function NotFound() {
   return (
     <>
       <PageHeader>
+        <NavigationButton />
         <h1 className="text-[13.5px] font-medium text-ink">Not found</h1>
       </PageHeader>
       <EmptyState

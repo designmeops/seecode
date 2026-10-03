@@ -41,7 +41,7 @@ export function FavoriteButton({
           event.stopPropagation();
           toggleFavoriteWithToast(item);
         }}
-        className={cn(active ? "text-[#e5a00d] hover:text-[#cc8e0b]" : "text-ink-4", className)}
+        className={cn(active ? "text-star hover:text-star/80" : "text-ink-4", className)}
       >
         <Star size={14} strokeWidth={1.9} fill={active ? "currentColor" : "none"} />
       </IconButton>

@@ -1,7 +1,8 @@
 import { ChevronDown, FileCode2 } from "lucide-react";
-import { useId, useMemo, useState } from "react";
+import { type CSSProperties, type ReactNode, useId, useMemo, useState } from "react";
 import type { ThemedToken } from "shiki/core";
 import { cn } from "../lib/cn";
+import { countLines } from "../lib/format";
 import { useHighlightedLines } from "../lib/highlight";
 import type { CodeLanguage } from "../registry/types";
 import { CopyButton } from "./CopyButton";
@@ -10,23 +11,47 @@ import { Button, focusRing } from "./ui/Button";
 export interface CodeTab {
   id: string;
   label: string;
+  /** Defaults to a file icon. */
+  icon?: ReactNode;
+  /** File name shown next to the copy button, e.g. `deal-card.tsx`. */
+  fileName?: string;
   language: CodeLanguage;
   code: string;
   copyKey: string;
   onCopy: () => Promise<boolean>;
+  copyTooltip?: string;
   copyShortcut?: string;
 }
 
 const COLLAPSED_LINES = 26;
 
-const FONT_STYLE_ITALIC = 1;
-const FONT_STYLE_BOLD = 2;
+interface CodeBlockProps {
+  tabs: CodeTab[];
+  /** Controlled selection (optional). */
+  value?: string;
+  onValueChange?: (id: string) => void;
+  /** Label for the tab list. */
+  label?: string;
+  className?: string;
+}
 
-export function CodeBlock({ tabs, className }: { tabs: CodeTab[]; className?: string }) {
-  const [activeId, setActiveId] = useState(tabs[0]?.id);
+export function CodeBlock({
+  tabs,
+  value,
+  onValueChange,
+  label = "Files",
+  className,
+}: CodeBlockProps) {
+  const [ownValue, setOwnValue] = useState(tabs[0]?.id);
   const [expanded, setExpanded] = useState(false);
   const baseId = useId();
+  const activeId = value ?? ownValue;
   const active = tabs.find((tab) => tab.id === activeId) ?? tabs[0];
+
+  const select = (id: string) => {
+    setOwnValue(id);
+    onValueChange?.(id);
+  };
 
   const plainLines = useMemo(() => active.code.replace(/\n$/, "").split("\n"), [active.code]);
   const highlighted = useHighlightedLines(active.code, active.language);
@@ -36,11 +61,11 @@ export function CodeBlock({ tabs, className }: { tabs: CodeTab[]; className?: st
 
   return (
     <div className={cn("overflow-hidden rounded-xl border border-line bg-subtle", className)}>
-      <div className="flex h-10 items-center gap-2 border-b border-line bg-panel pr-2 pl-1.5">
+      <div className="flex h-10 items-center gap-2 border-b border-line bg-card pr-2 pl-1.5">
         <div
           role="tablist"
-          aria-label="Files"
-          className="flex min-w-0 items-center gap-0.5 overflow-x-auto"
+          aria-label={label}
+          className="flex min-w-0 items-center gap-0.5 overflow-x-auto [scrollbar-width:none]"
         >
           {tabs.map((tab, index) => {
             const selected = tab.id === active.id;
@@ -53,12 +78,12 @@ export function CodeBlock({ tabs, className }: { tabs: CodeTab[]; className?: st
                 aria-selected={selected}
                 aria-controls={`${baseId}-panel`}
                 tabIndex={selected ? 0 : -1}
-                onClick={() => setActiveId(tab.id)}
+                onClick={() => select(tab.id)}
                 onKeyDown={(event) => {
                   if (event.key !== "ArrowRight" && event.key !== "ArrowLeft") return;
                   const step = event.key === "ArrowRight" ? 1 : -1;
                   const next = tabs[(index + step + tabs.length) % tabs.length];
-                  setActiveId(next.id);
+                  select(next.id);
                   document.getElementById(`${baseId}-tab-${next.id}`)?.focus();
                 }}
                 className={cn(
@@ -67,25 +92,25 @@ export function CodeBlock({ tabs, className }: { tabs: CodeTab[]; className?: st
                   selected ? "bg-active text-ink" : "text-ink-3 hover:bg-hover hover:text-ink-2",
                 )}
               >
-                <FileCode2
-                  size={13}
-                  strokeWidth={1.9}
-                  className={selected ? "text-ink-2" : "text-ink-4"}
-                />
+                <span className={cn("flex", selected ? "text-ink-2" : "text-ink-4")}>
+                  {tab.icon ?? <FileCode2 size={13} strokeWidth={1.9} />}
+                </span>
                 {tab.label}
               </button>
             );
           })}
         </div>
-        <div className="ml-auto flex items-center gap-2">
-          <span className="hidden text-[11px] font-medium tracking-wide text-ink-4 uppercase sm:inline">
-            {active.language}
+        <div className="ml-auto flex shrink-0 items-center gap-2.5">
+          <span className="hidden items-center gap-1.5 text-[12px] text-ink-4 md:flex">
+            {active.fileName && <span className="font-mono text-[11.5px]">{active.fileName}</span>}
+            {active.fileName && <span aria-hidden="true">·</span>}
+            <span className="tabular-nums">{countLines(active.code)} lines</span>
           </span>
           <CopyButton
             copyKey={active.copyKey}
             onCopy={active.onCopy}
             label="Copy"
-            tooltip={`Copy ${active.label}`}
+            tooltip={active.copyTooltip ?? `Copy ${active.label}`}
             shortcut={active.copyShortcut}
           />
         </div>
@@ -104,7 +129,7 @@ export function CodeBlock({ tabs, className }: { tabs: CodeTab[]; className?: st
                 <span className="sticky left-0 w-12 shrink-0 bg-subtle pr-4 text-right text-ink-4 tabular-nums select-none">
                   {index + 1}
                 </span>
-                <span className="pr-6 whitespace-pre text-[#2b2e36]">
+                <span className="pr-6 whitespace-pre text-code-fg">
                   {typeof line === "string" ? line : line.map(renderToken)}
                 </span>
               </span>
@@ -124,17 +149,10 @@ export function CodeBlock({ tabs, className }: { tabs: CodeTab[]; className?: st
   );
 }
 
+/** Tokens carry both themes' colors as CSS variables; `.code-token` picks one. */
 function renderToken(token: ThemedToken, index: number) {
-  const style = token.fontStyle ?? 0;
   return (
-    <span
-      key={index}
-      style={{
-        color: token.color,
-        fontStyle: style & FONT_STYLE_ITALIC ? "italic" : undefined,
-        fontWeight: style & FONT_STYLE_BOLD ? 600 : undefined,
-      }}
-    >
+    <span key={index} className="code-token" style={token.htmlStyle as CSSProperties | undefined}>
       {token.content}
     </span>
   );
