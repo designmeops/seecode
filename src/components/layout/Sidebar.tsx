@@ -159,7 +159,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="shrink-0 px-3 pb-3">
-        <div className="rounded-lg border border-line bg-panel p-3 shadow-card">
+        <div className="rounded-lg border border-line bg-panel p-3 shadow-card [@media(max-height:760px)]:hidden">
           <div className="flex items-center gap-2 text-mini font-medium text-ink">
             <PackagePlus size={15} strokeWidth={1.9} className="text-brand" />
             Publish a component
