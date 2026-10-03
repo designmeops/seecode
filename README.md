@@ -1,28 +1,34 @@
 # seecode
 
-A marketplace dashboard for copy-paste React components, styled after [Linear](https://linear.app)'s
-interface in light mode. Browse live previews and copy any component's source in one click.
+A marketplace dashboard for UI components, styled after [Linear](https://linear.app)'s interface
+in light and dark mode. Every component ships for **Next.js**, **Framer** and **Webflow** — browse
+live previews and copy the code for your platform in one click.
 
 **Live site:** https://seecode-rho.vercel.app
 
-![seecode — Explore page](docs/screenshot.png)
+![seecode — Explore page in light mode](docs/screenshot.png)
+![seecode — a component page in dark mode](docs/screenshot-dark.png)
 
 ## Features
 
-- **One-click copy.** Every card and code block has a Copy button that puts the component's exact
-  source on your clipboard (with a fallback for browsers that block the Clipboard API).
-- **Live, interactive previews.** Each component renders in an isolated canvas — click it, type in
-  it, hover it. What you see is the code you copy, because previews and code come from the same file.
-- **Component pages** with a large preview, syntax-highlighted source and usage example, install
-  steps, a props table, and a Linear-style properties panel.
-- **Linear-style navigation.** An inset panel layout, a ⌘K command menu, grid and grouped list
-  views, quick filters, favorites, a "Recently copied" history, right-click menus and toasts.
+- **Copy for your platform.** Each card has a copy button per platform: Next.js (React + Tailwind
+  CSS), Framer (a code component with property controls) and Webflow (an HTML + CSS embed). `c`
+  copies the platform you used last.
+- **Live, interactive previews.** Each component renders on its own canvas — click it, hover it.
+  The Next.js preview and the copied code come from the same file. Wide demos zoom out to fit,
+  like a design tool, and the canvas can be switched between light and dark.
+- **Component pages** with platform tabs, syntax-highlighted code, step-by-step instructions for
+  each platform, a props table and a Linear-style properties panel.
+- **Light, dark or system theme**, modelled on Linear's palettes, including the code highlighting.
+- **Linear-style layout.** One top bar per page holds the title, view tabs, filter and display
+  options; an inset panel layout, ⌘K command menu, grid and grouped list views, favorites, a
+  "Recently copied" history, right-click menus and toasts.
 - **Keyboard first.** `⌘K` search, `/` filter, `j`/`k` to move, `c` to copy, `f` to favorite,
   `v` to switch views, `g` then `e`/`f`/`r` to jump around. Press `?` for the full list.
 - **Responsive** down to phone widths, with a slide-out sidebar.
 
-Favorites, copy history and view preferences are stored in the browser (`localStorage`); there is
-no backend.
+Favorites, copy history, the theme and view preferences are stored in the browser
+(`localStorage`); there is no backend.
 
 ## Getting started
 
@@ -33,22 +39,23 @@ npm install
 npm run dev       # http://localhost:5173
 ```
 
-| Script              | What it does                                                   |
-| ------------------- | -------------------------------------------------------------- |
-| `npm run dev`       | Start the dev server                                           |
-| `npm run build`     | Type-check and build a static site into `dist/`                |
-| `npm run preview`   | Serve the production build locally                             |
-| `npm run typecheck` | Run TypeScript                                                 |
-| `npm test`          | Unit tests, plus registry checks that server-render every demo |
+| Script              | What it does                                             |
+| ------------------- | -------------------------------------------------------- |
+| `npm run dev`       | Start the dev server                                     |
+| `npm run build`     | Type-check and build a static site into `dist/`          |
+| `npm run preview`   | Serve the production build locally                       |
+| `npm run typecheck` | Run TypeScript                                           |
+| `npm test`          | Unit tests, plus registry checks for all three platforms |
 
 ## Adding a component
 
-Components live in `src/registry/components/<slug>/` as three files — the component people copy,
-a demo, and metadata. New folders are picked up automatically. See
-[CONTRIBUTING.md](CONTRIBUTING.md) for the full guide; `npm test` validates every entry.
+Components live in `src/registry/components/<slug>/`: the code for each platform
+(`<slug>.tsx`, `<slug>.framer.tsx`, `<slug>.webflow.html`), a demo and metadata. New folders are
+picked up automatically. See [CONTRIBUTING.md](CONTRIBUTING.md) for the full guide; `npm test`
+validates every entry, renders every demo and Framer version, and checks the Webflow class names.
 
-The sample components (and the authors credited on them) are placeholder content — replace them
-with your own.
+The current components are built from a Figma app design, with placeholder people and company
+names.
 
 ## Project structure
 
@@ -60,8 +67,8 @@ src/
 │   └── authors.ts       # creators shown on cards
 ├── pages/               # Explore / category / tag / favorites / recent, and the component page
 ├── components/          # dashboard UI: cards, rows, code block, command menu, dialogs…
-├── lib/                 # routing, persisted state, clipboard, search, syntax highlighting
-└── styles/index.css     # Tailwind v4 theme — the Linear-inspired light tokens
+├── lib/                 # routing, theme, platforms, persisted state, clipboard, search, highlighting
+└── styles/index.css     # Tailwind v4 theme — Linear-inspired light and dark tokens
 ```
 
 Built with React 19, TypeScript, Vite, Tailwind CSS v4, [cmdk](https://cmdk.paco.me),
