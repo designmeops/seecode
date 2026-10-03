@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useId,
-  useState,
-  type ButtonHTMLAttributes,
-  type MouseEvent,
-  type ReactNode,
-} from "react";
+import { useId, useState, type ButtonHTMLAttributes, type MouseEvent, type ReactNode } from "react";
 
 export type SwitchProps = Omit<
   ButtonHTMLAttributes<HTMLButtonElement>,

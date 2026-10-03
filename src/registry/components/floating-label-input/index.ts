@@ -6,7 +6,8 @@ import source from "./floating-label-input.tsx?raw";
 export default defineComponent({
   slug: "floating-label-input",
   name: "Floating Label Input",
-  description: "A text field whose label rests inside it and floats up on focus, with hint and error states.",
+  description:
+    "A text field whose label rests inside it and floats up on focus, with hint and error states.",
   category: "inputs",
   tags: ["form", "validation", "accessible"],
   author: "halftone",
@@ -15,7 +16,11 @@ export default defineComponent({
   files: [{ name: "floating-label-input.tsx", language: "tsx", code: source }],
   usage,
   props: [
-    { name: "label", type: "ReactNode", description: "Label that rests inside the field and floats up." },
+    {
+      name: "label",
+      type: "ReactNode",
+      description: "Label that rests inside the field and floats up.",
+    },
     { name: "hint", type: "ReactNode", description: "Helper text shown below the field." },
     {
       name: "error",
@@ -36,7 +41,7 @@ export default defineComponent({
     { name: "className", type: "string", description: "Classes for the wrapper, e.g. a width." },
     {
       name: "...props",
-      type: "ComponentProps<\"input\">",
+      type: 'ComponentProps<"input">',
       description: "Any native input attribute, including ref, value, onChange and type.",
     },
   ],

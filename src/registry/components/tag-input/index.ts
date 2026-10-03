@@ -6,7 +6,8 @@ import source from "./tag-input.tsx?raw";
 export default defineComponent({
   slug: "tag-input",
   name: "Tag Input",
-  description: "A chips field: Enter or comma adds a tag, Backspace removes the last, and duplicates are ignored.",
+  description:
+    "A chips field: Enter or comma adds a tag, Backspace removes the last, and duplicates are ignored.",
   category: "inputs",
   tags: ["form", "keyboard", "interactive"],
   author: "meadow",
@@ -16,13 +17,23 @@ export default defineComponent({
   usage,
   props: [
     { name: "value", type: "string[]", description: "Controlled tags. Pair with onChange." },
-    { name: "defaultValue", type: "string[]", default: "[]", description: "Initial tags when uncontrolled." },
+    {
+      name: "defaultValue",
+      type: "string[]",
+      default: "[]",
+      description: "Initial tags when uncontrolled.",
+    },
     {
       name: "onChange",
       type: "(tags: string[]) => void",
       description: "Called with the full list whenever a tag is added or removed.",
     },
-    { name: "placeholder", type: "string", default: '"Add tag…"', description: "Text input placeholder." },
+    {
+      name: "placeholder",
+      type: "string",
+      default: '"Add tag…"',
+      description: "Text input placeholder.",
+    },
     {
       name: "maxTags",
       type: "number",

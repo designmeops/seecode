@@ -122,7 +122,9 @@ export function PricingCard({
             <span
               key={cycle}
               className={`col-start-1 row-start-1 text-4xl/none font-semibold tracking-tight text-zinc-950 tabular-nums transition duration-200 ease-out ${
-                cycle === billing ? "" : "translate-y-1.5 opacity-0 blur-[3px] motion-reduce:translate-y-0"
+                cycle === billing
+                  ? ""
+                  : "translate-y-1.5 opacity-0 blur-[3px] motion-reduce:translate-y-0"
               }`}
             >
               {currency}

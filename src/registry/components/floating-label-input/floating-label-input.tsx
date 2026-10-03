@@ -40,7 +40,9 @@ export function FloatingLabelInput({
           type={type}
           placeholder={placeholder}
           aria-invalid={invalid || undefined}
-          aria-describedby={[message ? messageId : "", describedBy ?? ""].join(" ").trim() || undefined}
+          aria-describedby={
+            [message ? messageId : "", describedBy ?? ""].join(" ").trim() || undefined
+          }
           className="peer block h-14 w-full rounded-lg border border-zinc-300 bg-white px-3 pt-[1.375rem] pb-1.5 text-sm text-zinc-950 shadow-xs outline-hidden transition-[border-color,box-shadow] duration-150 placeholder:text-transparent hover:border-zinc-400 focus:border-indigo-500 focus:ring-3 focus:ring-indigo-500/15 focus:placeholder:text-zinc-400 disabled:cursor-not-allowed disabled:bg-zinc-50 disabled:text-zinc-500 aria-invalid:border-rose-400 aria-invalid:hover:border-rose-500 aria-invalid:focus:border-rose-500 aria-invalid:focus:ring-rose-500/15"
           {...props}
         />

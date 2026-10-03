@@ -35,7 +35,9 @@ export default function OtpInputDemo() {
           <path d="m4 7.5 8 5.5 8-5.5" />
         </svg>
       </div>
-      <h3 className="mt-4 text-base font-semibold tracking-tight text-zinc-950">Check your email</h3>
+      <h3 className="mt-4 text-base font-semibold tracking-tight text-zinc-950">
+        Check your email
+      </h3>
       <p className="mt-1 text-sm text-zinc-500">
         We sent a code to <span className="font-medium text-zinc-900">ana@acme.com</span>
       </p>

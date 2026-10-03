@@ -6,7 +6,8 @@ import source from "./pricing-card.tsx?raw";
 export default defineComponent({
   slug: "pricing-card",
   name: "Pricing Card",
-  description: "A plan card with a monthly/yearly toggle, an animated price, a feature list and a call to action.",
+  description:
+    "A plan card with a monthly/yearly toggle, an animated price, a feature list and a call to action.",
   category: "cards",
   tags: ["interactive", "cta", "minimal"],
   author: "nova",
@@ -18,13 +19,22 @@ export default defineComponent({
   props: [
     { name: "name", type: "ReactNode", description: "Plan name, e.g. “Pro”." },
     { name: "description", type: "ReactNode", description: "One line under the name." },
-    { name: "badge", type: "ReactNode", description: "Pill next to the name, e.g. “Most popular”." },
+    {
+      name: "badge",
+      type: "ReactNode",
+      description: "Pill next to the name, e.g. “Most popular”.",
+    },
     {
       name: "price",
       type: "{ monthly: number; yearly: number }",
       description: "Price per month for each cycle. The yearly saving badge is derived from these.",
     },
-    { name: "currency", type: "string", default: '"$"', description: "Symbol placed before prices." },
+    {
+      name: "currency",
+      type: "string",
+      default: '"$"',
+      description: "Symbol placed before prices.",
+    },
     { name: "features", type: "ReactNode[]", description: "Feature rows, each with a check icon." },
     { name: "ctaLabel", type: "ReactNode", default: '"Get started"', description: "Button label." },
     {
@@ -42,7 +52,8 @@ export default defineComponent({
     {
       name: "billing / onBillingChange",
       type: "BillingCycle / (billing) => void",
-      description: "Controlled billing cycle, e.g. to drive several cards from one page-level toggle.",
+      description:
+        "Controlled billing cycle, e.g. to drive several cards from one page-level toggle.",
     },
     { name: "className", type: "string", description: "Extra classes for the card, e.g. a width." },
   ],

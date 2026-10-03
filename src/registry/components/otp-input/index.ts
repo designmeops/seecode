@@ -6,7 +6,8 @@ import source from "./otp-input.tsx?raw";
 export default defineComponent({
   slug: "otp-input",
   name: "OTP Input",
-  description: "A one-time code field with separate digit boxes, paste and SMS autofill, and full keyboard support.",
+  description:
+    "A one-time code field with separate digit boxes, paste and SMS autofill, and full keyboard support.",
   category: "inputs",
   tags: ["form", "keyboard", "validation"],
   author: "orbit",
@@ -39,7 +40,11 @@ export default defineComponent({
       description: "Shows a dash between the two halves of the code.",
     },
     { name: "disabled", type: "boolean", default: "false", description: "Disables every box." },
-    { name: "name", type: "string", description: "Submits the joined code with a form under this name." },
+    {
+      name: "name",
+      type: "string",
+      description: "Submits the joined code with a form under this name.",
+    },
     {
       name: "aria-label",
       type: "string",

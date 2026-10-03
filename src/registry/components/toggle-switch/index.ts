@@ -6,7 +6,8 @@ import source from "./toggle-switch.tsx?raw";
 export default defineComponent({
   slug: "toggle-switch",
   name: "Toggle Switch",
-  description: "An accessible on/off switch with a sliding knob, optional label and description, controlled or not.",
+  description:
+    "An accessible on/off switch with a sliding knob, optional label and description, controlled or not.",
   category: "inputs",
   tags: ["form", "accessible", "keyboard"],
   author: "seecode",
@@ -15,21 +16,44 @@ export default defineComponent({
   files: [{ name: "toggle-switch.tsx", language: "tsx", code: source }],
   usage,
   props: [
-    { name: "checked", type: "boolean", description: "Controlled state. Pair with onCheckedChange." },
-    { name: "defaultChecked", type: "boolean", default: "false", description: "Initial state when uncontrolled." },
+    {
+      name: "checked",
+      type: "boolean",
+      description: "Controlled state. Pair with onCheckedChange.",
+    },
+    {
+      name: "defaultChecked",
+      type: "boolean",
+      default: "false",
+      description: "Initial state when uncontrolled.",
+    },
     {
       name: "onCheckedChange",
       type: "(checked: boolean) => void",
       description: "Called with the next state on click, Space or Enter.",
     },
-    { name: "label", type: "ReactNode", description: "Visible label. Clicking it toggles the switch." },
-    { name: "description", type: "ReactNode", description: "Secondary text, linked with aria-describedby." },
+    {
+      name: "label",
+      type: "ReactNode",
+      description: "Visible label. Clicking it toggles the switch.",
+    },
+    {
+      name: "description",
+      type: "ReactNode",
+      description: "Secondary text, linked with aria-describedby.",
+    },
     { name: "size", type: '"sm" | "md"', default: '"md"', description: "Track size." },
-    { name: "disabled", type: "boolean", default: "false", description: "Dims the row and blocks changes." },
+    {
+      name: "disabled",
+      type: "boolean",
+      default: "false",
+      description: "Dims the row and blocks changes.",
+    },
     {
       name: "className",
       type: "string",
-      description: "Classes for the row when a label or description is set, otherwise for the switch.",
+      description:
+        "Classes for the row when a label or description is set, otherwise for the switch.",
     },
     {
       name: "...props",

@@ -3,6 +3,7 @@
 import {
   createContext,
   type ReactNode,
+  type RefObject,
   useCallback,
   useContext,
   useEffect,
@@ -91,7 +92,34 @@ export function ToastProvider({
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  const listRef = useRef<HTMLOListElement>(null);
   const defaults = useRef({ duration, limit });
+
+  // Pause while the stack is hovered or holds keyboard focus. Native listeners
+  // keep working when the hovered or focused toast is removed mid-interaction.
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const enter = () => setHovered(true);
+    const leave = () => setHovered(false);
+    const focusIn = (event: FocusEvent) =>
+      setFocused(event.target instanceof Element && event.target.matches(":focus-visible"));
+    const focusOut = (event: FocusEvent) => {
+      if (!(event.relatedTarget instanceof Node && list.contains(event.relatedTarget))) {
+        setFocused(false);
+      }
+    };
+    list.addEventListener("pointerenter", enter);
+    list.addEventListener("pointerleave", leave);
+    list.addEventListener("focusin", focusIn);
+    list.addEventListener("focusout", focusOut);
+    return () => {
+      list.removeEventListener("pointerenter", enter);
+      list.removeEventListener("pointerleave", leave);
+      list.removeEventListener("focusin", focusIn);
+      list.removeEventListener("focusout", focusOut);
+    };
+  }, []);
 
   useEffect(() => {
     defaults.current = { duration, limit };
@@ -152,14 +180,10 @@ export function ToastProvider({
         className={`pointer-events-none fixed z-50 flex w-full max-w-sm p-3 ${positions[position]}`}
       >
         <ol
+          ref={listRef}
+          tabIndex={-1}
           aria-live="polite"
-          className={`flex w-full ${fromTop ? "flex-col-reverse" : "flex-col"}`}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          onFocus={() => setFocused(true)}
-          onBlur={(event) => {
-            if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
-          }}
+          className={`flex w-full outline-hidden ${fromTop ? "flex-col-reverse" : "flex-col"}`}
         >
           {toasts.map((item) => (
             <ToastItem
@@ -167,6 +191,7 @@ export function ToastProvider({
               toast={item}
               fromTop={fromTop}
               paused={hovered || focused}
+              listRef={listRef}
               onDismiss={dismiss}
               onRemove={remove}
             />
@@ -188,12 +213,14 @@ type ToastItemProps = {
   toast: Toast;
   fromTop: boolean;
   paused: boolean;
+  listRef: RefObject<HTMLOListElement | null>;
   onDismiss: (id: string) => void;
   onRemove: (id: string) => void;
 };
 
-function ToastItem({ toast, fromTop, paused, onDismiss, onRemove }: ToastItemProps) {
+function ToastItem({ toast, fromTop, paused, listRef, onDismiss, onRemove }: ToastItemProps) {
   const { id, open, version, duration } = toast;
+  const itemRef = useRef<HTMLLIElement>(null);
   const remaining = useRef(duration);
   const seenVersion = useRef(version);
 
@@ -213,17 +240,28 @@ function ToastItem({ toast, fromTop, paused, onDismiss, onRemove }: ToastItemPro
     };
   }, [id, open, version, duration, paused, onDismiss]);
 
-  // Unmount once the exit transition has played.
+  // Unmount once the exit transition has played. If focus was inside, hand it
+  // to the next toast (or the list) so keyboard users keep their place.
   useEffect(() => {
     if (open) return;
+    const item = itemRef.current;
+    const list = listRef.current;
+    if (item && list && item.contains(document.activeElement)) {
+      const open = [...list.querySelectorAll<HTMLElement>("li[data-open]")];
+      const after = open.find((other) => item.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING);
+      const neighbour = after ?? open[open.length - 1];
+      (neighbour?.querySelector<HTMLElement>("button") ?? list).focus();
+    }
     const timer = setTimeout(() => onRemove(id), EXIT_MS);
     return () => clearTimeout(timer);
-  }, [id, open, onRemove]);
+  }, [id, open, listRef, onRemove]);
 
   const variant = variants[toast.variant];
 
   return (
     <li
+      ref={itemRef}
+      data-open={open ? "" : undefined}
       className={`pointer-events-auto grid w-full transition-[grid-template-rows,opacity,translate,scale] duration-200 ease-[cubic-bezier(0.2,0.8,0.2,1)] motion-reduce:transition-none ${
         open
           ? `grid-rows-[1fr] starting:grid-rows-[0fr] starting:opacity-0 ${fromTop ? "starting:-translate-y-2" : "starting:translate-y-2"}`
@@ -235,7 +273,7 @@ function ToastItem({ toast, fromTop, paused, onDismiss, onRemove }: ToastItemPro
     >
       <div className="min-h-0">
         <div className="py-1">
-          <div className="flex w-full items-start gap-3 rounded-xl bg-white p-3.5 text-sm shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_4px_8px_-2px_rgb(0_0_0/0.06),0_16px_32px_-8px_rgb(0_0_0/0.14)]">
+          <div className="flex w-full items-start gap-3 rounded-xl bg-white py-3 pr-2.5 pl-3.5 text-sm shadow-[0_0_0_1px_rgb(0_0_0/0.06),0_4px_8px_-2px_rgb(0_0_0/0.06),0_16px_32px_-8px_rgb(0_0_0/0.14)]">
             <svg
               aria-hidden="true"
               viewBox="0 0 24 24"
@@ -249,8 +287,10 @@ function ToastItem({ toast, fromTop, paused, onDismiss, onRemove }: ToastItemPro
             <div className="min-w-0 flex-1">
               <p className="leading-5 font-medium text-zinc-900">{toast.title}</p>
               {toast.description && (
-                <p className="mt-0.5 leading-5 text-zinc-500">{toast.description}</p>
+                <p className="text-[13px] leading-5 text-zinc-500">{toast.description}</p>
               )}
+            </div>
+            <div className="flex shrink-0 items-center gap-1 self-center">
               {toast.action && (
                 <button
                   type="button"
@@ -258,30 +298,30 @@ function ToastItem({ toast, fromTop, paused, onDismiss, onRemove }: ToastItemPro
                     toast.action?.onClick();
                     onDismiss(id);
                   }}
-                  className="mt-2.5 inline-flex h-7 items-center rounded-md bg-white px-2.5 text-xs font-medium text-zinc-900 shadow-xs ring-1 ring-zinc-950/10 transition-colors duration-150 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                  className="inline-flex h-7 items-center rounded-md bg-white px-2.5 text-xs font-medium text-zinc-900 shadow-xs ring-1 ring-zinc-950/10 transition-colors duration-150 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
                   {toast.action.label}
                 </button>
               )}
-            </div>
-            <button
-              type="button"
-              aria-label="Dismiss notification"
-              onClick={() => onDismiss(id)}
-              className="-mt-0.5 -mr-1 grid size-6 shrink-0 place-items-center rounded-md text-zinc-400 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-500"
-            >
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 24 24"
-                className="size-4"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
+              <button
+                type="button"
+                aria-label="Dismiss notification"
+                onClick={() => onDismiss(id)}
+                className="grid size-7 place-items-center rounded-md text-zinc-400 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-500"
               >
-                <path d="M6 6l12 12M18 6 6 18" />
-              </svg>
-            </button>
+                <svg
+                  aria-hidden="true"
+                  viewBox="0 0 24 24"
+                  className="size-4"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  strokeLinecap="round"
+                >
+                  <path d="M6 6l12 12M18 6 6 18" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>

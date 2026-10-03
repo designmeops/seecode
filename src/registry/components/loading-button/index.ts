@@ -6,7 +6,8 @@ import source from "./loading-button.tsx?raw";
 export default defineComponent({
   slug: "loading-button",
   name: "Async Button",
-  description: "Runs an async action and morphs through loading, success and error states without shifting width.",
+  description:
+    "Runs an async action and morphs through loading, success and error states without shifting width.",
   category: "buttons",
   tags: ["animated", "status", "accessible"],
   author: "seecode",
@@ -23,8 +24,18 @@ export default defineComponent({
       description:
         "Click handler. Return a promise to show the loading state, then success when it resolves or error when it rejects.",
     },
-    { name: "loadingText", type: "ReactNode", default: '"Saving…"', description: "Label while pending." },
-    { name: "successText", type: "ReactNode", default: '"Saved"', description: "Label after the promise resolves." },
+    {
+      name: "loadingText",
+      type: "ReactNode",
+      default: '"Saving…"',
+      description: "Label while pending.",
+    },
+    {
+      name: "successText",
+      type: "ReactNode",
+      default: '"Saved"',
+      description: "Label after the promise resolves.",
+    },
     {
       name: "errorText",
       type: "ReactNode",

@@ -6,7 +6,8 @@ import source from "./gradient-border-button.tsx?raw";
 export default defineComponent({
   slug: "gradient-border-button",
   name: "Aurora Border Button",
-  description: "A white pill button wrapped in a slowly turning indigo, fuchsia and amber gradient ring.",
+  description:
+    "A white pill button wrapped in a slowly turning indigo, fuchsia and amber gradient ring.",
   category: "buttons",
   tags: ["animated", "gradient", "cta"],
   author: "nova",
@@ -15,7 +16,11 @@ export default defineComponent({
   files: [{ name: "gradient-border-button.tsx", language: "tsx", code: source }],
   usage,
   props: [
-    { name: "children", type: "ReactNode", description: "Label and optional leading or trailing icon." },
+    {
+      name: "children",
+      type: "ReactNode",
+      description: "Label and optional leading or trailing icon.",
+    },
     {
       name: "type",
       type: '"button" | "submit" | "reset"',

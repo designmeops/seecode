@@ -37,7 +37,7 @@ function Triggers() {
           toast({
             variant: "success",
             title: "Changes saved",
-            description: "Your workspace settings were updated.",
+            description: "Workspace settings updated.",
             action: { label: "Undo", onClick: () => toast("Changes reverted") },
           })
         }
