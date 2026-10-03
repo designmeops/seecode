@@ -1,0 +1,118 @@
+<!--
+  Breadcrumb Bar · seecode
+  Paste into a Webflow Code Embed (Add panel → Elements → Code Embed).
+  Classes are prefixed with "sc-breadcrumb" so they never clash with your site's styles.
+  The last item is the current page (aria-current="page").
+-->
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap"
+/>
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="sc-breadcrumb-bar-chevron" viewBox="0 0 24 24"><path d="M9 6l6 6l-6 6" /></symbol>
+</svg>
+
+<div class="sc-breadcrumb-page">
+  <header class="sc-breadcrumb-bar">
+    <nav class="sc-breadcrumb-bar__nav" aria-label="Breadcrumb">
+      <ol class="sc-breadcrumb-bar__list">
+        <li class="sc-breadcrumb-bar__item">
+          <a href="#" class="sc-breadcrumb-bar__link">Companies</a>
+          <svg class="sc-breadcrumb-bar__chevron" aria-hidden="true">
+            <use href="#sc-breadcrumb-bar-chevron" />
+          </svg>
+        </li>
+        <li class="sc-breadcrumb-bar__item">
+          <a
+            href="#"
+            class="sc-breadcrumb-bar__link sc-breadcrumb-bar__link--current"
+            aria-current="page"
+          >
+            Acme Inc.
+          </a>
+        </li>
+      </ol>
+    </nav>
+  </header>
+  <div class="sc-breadcrumb-page__body"></div>
+</div>
+
+<style>
+  .sc-breadcrumb-page {
+    box-sizing: border-box;
+    max-width: 720px;
+    overflow: hidden;
+    border: 1px solid #bcbccd;
+    border-radius: 12px;
+    background: #f4f4fb;
+  }
+  .sc-breadcrumb-page__body {
+    height: 96px;
+  }
+  .sc-breadcrumb-bar {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    height: 56px;
+    padding: 0 27px 0 24px;
+    background: #ffffff;
+    box-shadow: 0 6px 20px rgba(27, 19, 94, 0.03);
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: -0.03em;
+  }
+  .sc-breadcrumb-bar *,
+  .sc-breadcrumb-bar *::before,
+  .sc-breadcrumb-bar *::after {
+    box-sizing: border-box;
+  }
+  .sc-breadcrumb-bar__nav {
+    min-width: 0;
+  }
+  .sc-breadcrumb-bar__list,
+  .sc-breadcrumb-bar__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+  .sc-breadcrumb-bar__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sc-breadcrumb-bar__link {
+    overflow: hidden;
+    border-radius: 2px;
+    color: #6b6b77;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .sc-breadcrumb-bar__link:hover {
+    color: #17171b;
+  }
+  .sc-breadcrumb-bar__link:focus-visible {
+    outline: 2px solid #2867ef;
+    outline-offset: 2px;
+  }
+  .sc-breadcrumb-bar__link--current {
+    color: #17171b;
+    font-weight: 600;
+  }
+  .sc-breadcrumb-bar__chevron {
+    width: 16px;
+    height: 16px;
+    margin: 4px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: #d0d0de;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+</style>

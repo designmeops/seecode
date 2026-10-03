@@ -1,0 +1,445 @@
+<!--
+  People · seecode
+  Paste into a Webflow Code Embed (Add panel → Elements → Code Embed).
+  Classes are prefixed with "sc-people-list" so they never clash with your site's styles.
+  The inline script copies an email address when its copy button is pressed (published site only).
+-->
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Geist:wght@600&family=Inter:wght@500&display=swap"
+/>
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="sc-people-list-buildings" viewBox="0 0 24 24">
+    <path
+      d="M4 21v-15c0 -1 1 -2 2 -2h5c1 0 2 1 2 2v15M16 8h2c1 0 2 1 2 2v11M3 21h18M10 12v.01M10 16v.01M10 8v.01M7 12v.01M7 16v.01M7 8v.01M17 12v.01M17 16v.01"
+    />
+  </symbol>
+  <symbol id="sc-people-list-user-check" viewBox="0 0 24 24">
+    <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0M6 21v-2a4 4 0 0 1 4 -4h4M15 19l2 2l4 -4" />
+  </symbol>
+  <symbol id="sc-people-list-mailbox" viewBox="0 0 24 24">
+    <path
+      d="M10 21v-6.5a3.5 3.5 0 0 0 -7 0v6.5h18v-6a4 4 0 0 0 -4 -4h-10.5M12 11v-8h4l2 2l-2 2h-4M6 15h1"
+    />
+  </symbol>
+  <!-- Mirrored so the front sheet sits bottom-left, as in the design. -->
+  <symbol id="sc-people-list-copy" viewBox="0 0 24 24">
+    <g transform="matrix(-1 0 0 1 24 0)">
+      <path
+        d="M7 9.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667l0 -8.666"
+      />
+      <path
+        d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"
+      />
+    </g>
+  </symbol>
+  <symbol id="sc-people-list-check" viewBox="0 0 24 24"><path d="M5 12l5 5l10 -10" /></symbol>
+</svg>
+
+<section class="sc-people-list">
+  <h2 class="sc-people-list__title">
+    <svg class="sc-people-list__icon"><use href="#sc-people-list-buildings" /></svg>
+    People
+  </h2>
+  <div role="table" aria-label="People" class="sc-people-list__table">
+    <div role="row" class="sc-people-list__row sc-people-list__row--head">
+      <div role="columnheader" class="sc-people-list__label">
+        <svg class="sc-people-list__icon"><use href="#sc-people-list-user-check" /></svg>
+        Name
+      </div>
+      <div role="columnheader" class="sc-people-list__label">
+        <svg class="sc-people-list__icon"><use href="#sc-people-list-mailbox" /></svg>
+        Email
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar sc-people-list__avatar--blue" aria-hidden="true"
+          ><span>LA</span></span
+        >
+        Liam Anderson
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:l.anderson@acme.studio"
+          >l.anderson@acme.studio</a
+        >
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="l.anderson@acme.studio"
+          aria-label="Copy l.anderson@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar" aria-hidden="true"><span>MC</span></span>
+        Mason Carter
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:m.carter@acme.studio">m.carter@acme.studio</a>
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="m.carter@acme.studio"
+          aria-label="Copy m.carter@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar sc-people-list__avatar--red" aria-hidden="true"
+          ><span>EC</span></span
+        >
+        Evelyn Carter
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:e.carter@acme.studio">e.carter@acme.studio</a>
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="e.carter@acme.studio"
+          aria-label="Copy e.carter@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar sc-people-list__avatar--blue" aria-hidden="true"
+          ><span>OT</span></span
+        >
+        Oliver Thompson
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:o.thompson@acme.studio"
+          >o.thompson@acme.studio</a
+        >
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="o.thompson@acme.studio"
+          aria-label="Copy o.thompson@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar sc-people-list__avatar--green" aria-hidden="true"
+          ><span>NB</span></span
+        >
+        Noah Bennett
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:n.bennett@acme.studio"
+          >n.bennett@acme.studio</a
+        >
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="n.bennett@acme.studio"
+          aria-label="Copy n.bennett@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar" aria-hidden="true"><span>AB</span></span>
+        Aiden Brooks
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:a.brooks@acme.studio">a.brooks@acme.studio</a>
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="a.brooks@acme.studio"
+          aria-label="Copy a.brooks@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div role="row" class="sc-people-list__row">
+      <div role="cell" class="sc-people-list__person">
+        <span class="sc-people-list__avatar sc-people-list__avatar--blue" aria-hidden="true"
+          ><span>ES</span></span
+        >
+        Ethan Sullivan
+      </div>
+      <div role="cell" class="sc-people-list__email">
+        <a class="sc-people-list__link" href="mailto:e.sullivan@acme.studio"
+          >e.sullivan@acme.studio</a
+        >
+        <button
+          type="button"
+          class="sc-people-list__copy"
+          data-email="e.sullivan@acme.studio"
+          aria-label="Copy e.sullivan@acme.studio"
+        >
+          <svg class="sc-people-list__icon sc-people-list__copy-icon">
+            <use href="#sc-people-list-copy" />
+          </svg>
+          <svg class="sc-people-list__icon sc-people-list__check-icon">
+            <use href="#sc-people-list-check" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <p class="sc-people-list__status" role="status"></p>
+</section>
+<script>
+  (function () {
+    var root = document.currentScript && document.currentScript.previousElementSibling;
+    if (!root || !root.classList.contains("sc-people-list")) return;
+    var status = root.querySelector(".sc-people-list__status");
+    var timer;
+    root.addEventListener("click", function (event) {
+      var button = event.target.closest(".sc-people-list__copy");
+      if (!button || !navigator.clipboard) return;
+      var email = button.getAttribute("data-email");
+      navigator.clipboard.writeText(email).then(
+        function () {
+          var previous = root.querySelector(".sc-people-list__copy--done");
+          if (previous) previous.classList.remove("sc-people-list__copy--done");
+          button.classList.add("sc-people-list__copy--done");
+          status.textContent = "Copied " + email;
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            button.classList.remove("sc-people-list__copy--done");
+            status.textContent = "";
+          }, 2000);
+        },
+        function () {},
+      );
+    });
+  })();
+</script>
+
+<style>
+  .sc-people-list {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px;
+    background: #ffffff;
+    color: #17171b;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.03em;
+  }
+  .sc-people-list *,
+  .sc-people-list *::before,
+  .sc-people-list *::after {
+    box-sizing: border-box;
+  }
+  .sc-people-list__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font: inherit;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: -0.02em;
+  }
+  .sc-people-list__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: #6b6b77;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* An ARIA table on a grid: the email column only shrinks (and truncates) when space runs out. */
+  .sc-people-list__table {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 24px;
+  }
+  .sc-people-list__row {
+    display: grid;
+    grid-column: span 2;
+    grid-template-columns: subgrid;
+  }
+  .sc-people-list__row--head {
+    margin-bottom: 4px;
+    color: #6b6b77;
+  }
+  .sc-people-list__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sc-people-list__person {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .sc-people-list__avatar {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-image:
+      radial-gradient(71% 71% at -15% 21%, rgb(222 222 236 / 0.5), rgb(222 222 236 / 0)),
+      radial-gradient(82% 82% at 94% 20%, rgb(240 240 247 / 0.45), rgb(240 240 247 / 0)),
+      linear-gradient(#c6c6d1, #6b6b77);
+    box-shadow: inset 0 1px 4px rgba(255, 255, 255, 0.3);
+  }
+  .sc-people-list__avatar--blue {
+    background-image:
+      radial-gradient(71% 71% at -15% 21%, rgb(214 156 237 / 0.43), rgb(214 156 237 / 0)),
+      radial-gradient(82% 82% at 94% 20%, rgb(255 156 52 / 0.38), rgb(255 156 52 / 0)),
+      linear-gradient(#f1a7df, #4642ec);
+  }
+  .sc-people-list__avatar--red {
+    background-image:
+      radial-gradient(107% 107% at 90% -7%, rgb(247 159 255), rgb(247 159 255 / 0)),
+      radial-gradient(113% 113% at 66% 99%, rgb(245 40 47 / 0.94), rgb(245 40 47 / 0)),
+      linear-gradient(#fffcf7, #f7608a);
+  }
+  .sc-people-list__avatar--green {
+    background-image:
+      radial-gradient(116% 116% at 121% -12%, rgb(138 147 255 / 0.69), rgb(138 147 255 / 0)),
+      radial-gradient(69% 69% at 150% 100%, rgb(191 224 142 / 0.74), rgb(191 224 142 / 0)),
+      linear-gradient(#aff6df, #38b372);
+  }
+  .sc-people-list__avatar > span {
+    background-image: linear-gradient(#fafafa 25%, rgba(255, 255, 255, 0.5) 72.5%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-family: "Geist", "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: -0.03em;
+  }
+  .sc-people-list__email {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+  /* Hovering or focusing an email turns it into a blue link with a copy button. */
+  .sc-people-list__link {
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 2px;
+    color: #17171b;
+    text-decoration: none;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .sc-people-list__copy {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    margin: -4px;
+    padding: 4px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .sc-people-list__copy .sc-people-list__icon {
+    stroke: #2867ef;
+  }
+  .sc-people-list__check-icon,
+  .sc-people-list__copy--done .sc-people-list__copy-icon {
+    display: none;
+  }
+  .sc-people-list__copy--done .sc-people-list__check-icon {
+    display: block;
+  }
+  .sc-people-list__email:focus-within .sc-people-list__link {
+    color: #2867ef;
+  }
+  .sc-people-list__email:focus-within .sc-people-list__copy,
+  .sc-people-list__copy--done {
+    opacity: 1;
+  }
+  @media (hover: hover) {
+    .sc-people-list__email:hover .sc-people-list__link {
+      color: #2867ef;
+    }
+    .sc-people-list__email:hover .sc-people-list__copy {
+      opacity: 1;
+    }
+  }
+  @media (hover: none) {
+    .sc-people-list__copy {
+      opacity: 1;
+    }
+  }
+  .sc-people-list__link:focus-visible,
+  .sc-people-list__copy:focus-visible {
+    outline: 2px solid #2867ef;
+    outline-offset: 1px;
+  }
+  .sc-people-list__status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

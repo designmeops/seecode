@@ -1,0 +1,346 @@
+<!--
+  Company details · seecode
+  Paste into a Webflow Code Embed (Add panel → Elements → Code Embed).
+  Classes are prefixed with "sc-details-panel" so they never clash with your site's styles.
+  The Salesforce and Attio marks are stand-ins: swap the <svg> in each link for an
+  <img class="sc-details-panel__logo" src="…" alt="" /> with the real logo.
+-->
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap"
+/>
+
+<svg width="0" height="0" style="position: absolute" aria-hidden="true">
+  <symbol id="sc-details-panel-buildings" viewBox="0 0 24 24">
+    <path
+      d="M3 21l18 0M5 21v-14l8 -4v18M19 21v-10l-6 -4M9 9l0 .01M9 12l0 .01M9 15l0 .01M9 18l0 .01"
+    />
+  </symbol>
+  <symbol id="sc-details-panel-library" viewBox="0 0 24 24">
+    <path d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+  </symbol>
+  <symbol id="sc-details-panel-globe" viewBox="0 0 24 24">
+    <path
+      d="M21 12a9 9 0 0 1-9 9m9-9a9 9 0 0 0-9-9m9 9H3m9 9a9 9 0 0 1-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 0 1 9-9"
+    />
+  </symbol>
+  <symbol id="sc-details-panel-light-bulb" viewBox="0 0 24 24">
+    <path
+      d="M9.663 17h4.673M12 3v1m6.364 1.636-.707.707M21 12h-1M4 12H3m3.343-5.657-.707-.707m2.828 9.9a5 5 0 1 1 7.072 0l-.548.547A3.374 3.374 0 0 0 14 18.469V19a2 2 0 1 1-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+    />
+  </symbol>
+  <symbol id="sc-details-panel-document-report" viewBox="0 0 24 24">
+    <path
+      d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"
+    />
+  </symbol>
+  <symbol id="sc-details-panel-currency-dollar" viewBox="0 0 24 24">
+    <path
+      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"
+    />
+  </symbol>
+  <symbol id="sc-details-panel-globe-stand" viewBox="0 0 24 24">
+    <path d="M7 9a4 4 0 1 0 8 0a4 4 0 0 0 -8 0M5.75 15a8.015 8.015 0 1 0 9.25 -13M11 17v4M7 21h8" />
+  </symbol>
+  <symbol id="sc-details-panel-plus" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" /></symbol>
+  <symbol id="sc-details-panel-external" viewBox="0 0 24 24">
+    <path d="M10 6H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4M14 4h6m0 0v6m0-6L10 14" />
+  </symbol>
+  <symbol id="sc-details-panel-salesforce" viewBox="0 0 26 18">
+    <g fill="#00a1e0">
+      <circle cx="6.5" cy="9.5" r="5" />
+      <circle cx="11.5" cy="6.5" r="5.2" />
+      <circle cx="18" cy="6.4" r="4.6" />
+      <circle cx="21" cy="10.2" r="4.2" />
+      <circle cx="10" cy="12.2" r="4.6" />
+      <circle cx="16.6" cy="12.4" r="4.6" />
+    </g>
+  </symbol>
+  <symbol id="sc-details-panel-attio" viewBox="0 0 18 18">
+    <path
+      d="M4.6 14.2 9.4 4.8M10.6 14.2l1.8-3.6"
+      fill="none"
+      stroke="#1c1d1f"
+      stroke-width="3.2"
+      stroke-linecap="round"
+    />
+    <circle cx="14.6" cy="13" r="1.8" fill="#1c1d1f" />
+  </symbol>
+</svg>
+
+<section class="sc-details-panel">
+  <h2 class="sc-details-panel__title">
+    <svg class="sc-details-panel__icon"><use href="#sc-details-panel-buildings" /></svg>
+    Company details
+  </h2>
+  <div class="sc-details-panel__body">
+    <dl class="sc-details-panel__properties">
+      <dt>
+        <svg class="sc-details-panel__icon"><use href="#sc-details-panel-library" /></svg>Name
+      </dt>
+      <dd>Acme Corporation.</dd>
+      <dt>
+        <svg class="sc-details-panel__icon"><use href="#sc-details-panel-globe" /></svg>Website
+      </dt>
+      <dd>
+        <a
+          class="sc-details-panel__link"
+          href="https://www.acme.studio/us"
+          target="_blank"
+          rel="noreferrer"
+        >
+          <span class="sc-details-panel__text">www.acme.studio/us</span>
+          <svg class="sc-details-panel__icon"><use href="#sc-details-panel-external" /></svg>
+        </a>
+      </dd>
+      <dt>
+        <svg class="sc-details-panel__icon"><use href="#sc-details-panel-light-bulb" /></svg
+        >Industry
+      </dt>
+      <dd>
+        <ul class="sc-details-panel__chips">
+          <li class="sc-details-panel__chip">Tech</li>
+          <li class="sc-details-panel__chip">Sales</li>
+          <li class="sc-details-panel__chip">Marketing</li>
+        </ul>
+      </dd>
+      <dt>
+        <svg class="sc-details-panel__icon"><use href="#sc-details-panel-document-report" /></svg
+        >Size
+      </dt>
+      <dd>100-500</dd>
+      <dt>
+        <svg class="sc-details-panel__icon"><use href="#sc-details-panel-currency-dollar" /></svg
+        >Revenue
+      </dt>
+      <dd>est. 100,000.00 USD</dd>
+      <dt>
+        <svg class="sc-details-panel__icon"><use href="#sc-details-panel-globe-stand" /></svg
+        >Location
+      </dt>
+      <dd>San Francisco, US</dd>
+    </dl>
+    <button type="button" class="sc-details-panel__add">
+      <svg class="sc-details-panel__icon sc-details-panel__icon--bold">
+        <use href="#sc-details-panel-plus" />
+      </svg>
+      Add a property
+    </button>
+  </div>
+  <div class="sc-details-panel__apps">
+    <a
+      class="sc-details-panel__app"
+      href="https://login.salesforce.com"
+      target="_blank"
+      rel="noreferrer"
+    >
+      <svg class="sc-details-panel__logo sc-details-panel__logo--wide">
+        <use href="#sc-details-panel-salesforce" />
+      </svg>
+      <span class="sc-details-panel__text">View in Salesforce</span>
+      <svg class="sc-details-panel__icon sc-details-panel__external">
+        <use href="#sc-details-panel-external" />
+      </svg>
+    </a>
+    <a class="sc-details-panel__app" href="https://app.attio.com" target="_blank" rel="noreferrer">
+      <svg class="sc-details-panel__logo"><use href="#sc-details-panel-attio" /></svg>
+      <span class="sc-details-panel__text">View in Attio</span>
+      <svg class="sc-details-panel__icon sc-details-panel__external">
+        <use href="#sc-details-panel-external" />
+      </svg>
+    </a>
+  </div>
+</section>
+
+<style>
+  .sc-details-panel {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 470px;
+    padding: 24px 0;
+    border-radius: 0 0 6px 0;
+    background: #ffffff;
+    color: #17171b;
+    font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: normal;
+    letter-spacing: -0.03em;
+  }
+  .sc-details-panel *,
+  .sc-details-panel *::before,
+  .sc-details-panel *::after {
+    box-sizing: border-box;
+  }
+  .sc-details-panel__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    padding: 0 24px;
+    font: inherit;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+  }
+  .sc-details-panel__icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sc-details-panel__icon--bold {
+    stroke-width: 2;
+  }
+  .sc-details-panel__title .sc-details-panel__icon {
+    color: #6b6b77;
+  }
+  .sc-details-panel__body {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 8px 24px;
+    padding: 0 24px;
+  }
+  .sc-details-panel__properties {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    row-gap: 8px;
+    margin: 0;
+  }
+  .sc-details-panel__properties dt {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    color: #6b6b77;
+    font-weight: inherit;
+    white-space: nowrap;
+  }
+  .sc-details-panel__properties dd {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    min-height: 28px;
+    margin: 0;
+  }
+  .sc-details-panel__text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .sc-details-panel__link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    border-radius: 2px;
+    color: #2867ef;
+    text-decoration: none;
+    text-underline-offset: 2px;
+  }
+  .sc-details-panel__link:hover {
+    text-decoration: underline;
+  }
+  .sc-details-panel__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .sc-details-panel__chip {
+    display: flex;
+    align-items: center;
+    height: 28px;
+    margin: 0;
+    padding: 0 8px;
+    border: 0.5px solid #f4f4fb;
+    border-radius: 6px;
+    background: #ffffff;
+    box-shadow:
+      0 0.5px 0.5px 0.25px rgba(154, 157, 166, 0.03),
+      0 1.4px 1.4px -0.7px rgba(44, 51, 69, 0.04);
+    color: #6b6b77;
+  }
+  .sc-details-panel__add {
+    display: flex;
+    grid-column: 1;
+    justify-self: start;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #17171b;
+    font: inherit;
+    letter-spacing: inherit;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+  .sc-details-panel__add .sc-details-panel__icon {
+    color: #2867ef;
+  }
+  .sc-details-panel__add:hover {
+    color: #2867ef;
+  }
+  .sc-details-panel__apps {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+    padding: 0 24px;
+  }
+  .sc-details-panel__app {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid rgba(178, 178, 191, 0.15);
+    border-radius: 8px;
+    background: linear-gradient(rgba(255, 255, 255, 0), #ffffff);
+    box-shadow:
+      0 0.5px 0.5px 0.25px rgba(154, 157, 166, 0.03),
+      0 1.4px 1.4px -0.7px rgba(44, 51, 69, 0.04);
+    color: #17171b;
+    text-decoration: none;
+  }
+  .sc-details-panel__app:hover {
+    background: #fafafa;
+  }
+  .sc-details-panel__logo {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    object-fit: contain;
+  }
+  .sc-details-panel__logo--wide {
+    width: 26px;
+  }
+  .sc-details-panel__external {
+    color: #c6c6d1;
+    transition: color 0.15s;
+  }
+  .sc-details-panel__app:hover .sc-details-panel__external {
+    color: #6b6b77;
+  }
+  .sc-details-panel__link:focus-visible,
+  .sc-details-panel__add:focus-visible,
+  .sc-details-panel__app:focus-visible {
+    outline: 2px solid #2867ef;
+    outline-offset: 2px;
+  }
+</style>
