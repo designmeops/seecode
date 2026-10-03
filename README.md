@@ -31,13 +31,13 @@ npm install
 npm run dev       # http://localhost:5173
 ```
 
-| Script              | What it does                                                      |
-| ------------------- | ----------------------------------------------------------------- |
-| `npm run dev`       | Start the dev server                                              |
-| `npm run build`     | Type-check and build a static site into `dist/`                   |
-| `npm run preview`   | Serve the production build locally                                |
-| `npm run typecheck` | Run TypeScript                                                    |
-| `npm test`          | Unit tests, plus registry checks that server-render every demo    |
+| Script              | What it does                                                   |
+| ------------------- | -------------------------------------------------------------- |
+| `npm run dev`       | Start the dev server                                           |
+| `npm run build`     | Type-check and build a static site into `dist/`                |
+| `npm run preview`   | Serve the production build locally                             |
+| `npm run typecheck` | Run TypeScript                                                 |
+| `npm test`          | Unit tests, plus registry checks that server-render every demo |
 
 ## Adding a component
 
@@ -68,6 +68,20 @@ Built with React 19, TypeScript, Vite, Tailwind CSS v4, [cmdk](https://cmdk.paco
 
 ## Deploying
 
+### Vercel
+
+The repo includes a [`vercel.json`](vercel.json), so there is nothing to configure:
+
+1. In Vercel, choose **Add New… → Project** and import `designmeops/seecode` from GitHub.
+2. Leave the detected settings as they are (Vite, `npm run build`, output `dist`) and click
+   **Deploy**.
+
+Vercel deploys the repository's default branch to production and gives every other branch and
+pull request its own preview URL. Hashed files in `/assets` are cached for a year; `index.html`
+is always revalidated, so a new deploy shows up on the next page load.
+
+### Anywhere else
+
 `npm run build` produces a fully static site in `dist/`. It uses hash routes and relative asset
-paths, so it works from any static host or sub-path (GitHub Pages, Netlify, Vercel, S3) with no
-rewrite rules.
+paths, so it works from any static host or sub-path (GitHub Pages, Netlify, S3) with no rewrite
+rules.
