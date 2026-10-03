@@ -15,7 +15,7 @@ export type DockItem = {
   /** Accessible name, also shown in the tooltip. */
   label: string;
   icon: ReactNode;
-  /** Classes for the icon tile, usually a gradient such as `bg-linear-to-b from-sky-400 to-blue-600`. */
+  /** Classes for the icon tile: a background such as `bg-linear-to-b from-sky-400 to-blue-600`, plus a text color if the glyph shouldn't be white. */
   tileClassName?: string;
   /** Shows the dot that marks a running app. */
   open?: boolean;
@@ -218,12 +218,12 @@ export function Dock({
               onFocus={(event) => handleFocus(event, index)}
               onBlur={() => setKeyboard(null)}
               onKeyDown={(event) => handleKeyDown(event, index)}
-              className="absolute inset-0 origin-bottom rounded-[24%] transition-transform duration-150 ease-out will-change-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 motion-reduce:transition-none"
+              className="absolute inset-0 origin-bottom rounded-[24%] text-white transition-transform duration-150 ease-out will-change-transform focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 motion-reduce:transition-none"
               style={{ transform: `translateX(${shift}px) scale(${scale})` }}
             >
               <span
                 key={bouncing ? bounce.count : "rest"}
-                className={`flex size-full items-center justify-center rounded-[24%] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.35),inset_0_0_0_1px_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.14),0_4px_8px_-2px_rgb(0_0_0/0.14)] [&_svg]:size-[55%] ${
+                className={`flex size-full items-center justify-center rounded-[24%] shadow-[inset_0_1px_0_rgb(255_255_255/0.35),inset_0_0_0_1px_rgb(255_255_255/0.08),0_1px_2px_rgb(0_0_0/0.14),0_4px_8px_-2px_rgb(0_0_0/0.14)] [&_svg]:size-[55%] ${
                   item.tileClassName ?? "bg-linear-to-b from-zinc-600 to-zinc-800"
                 } ${bouncing ? "animate-[dock-bounce_0.7s_ease-out] motion-reduce:animate-none" : ""}`}
               >

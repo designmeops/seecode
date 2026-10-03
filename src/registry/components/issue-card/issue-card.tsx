@@ -136,7 +136,7 @@ export function IssueCard({
         {due && (
           <span className="inline-flex h-5 items-center gap-1 rounded-md border border-zinc-200 px-1.5 text-xs font-medium tabular-nums text-zinc-600">
             <CalendarIcon className="size-3 text-zinc-400" />
-            <span className="sr-only">Due</span>
+            <span className="sr-only">Due </span>
             <time dateTime={toIsoDate(due)}>{dueFormat.format(due)}</time>
           </span>
         )}
@@ -145,7 +145,7 @@ export function IssueCard({
           <span className="ml-auto inline-flex items-center gap-1 text-xs font-medium tabular-nums text-zinc-500">
             <CommentIcon className="size-3.5" />
             {comments}
-            <span className="sr-only">{comments === 1 ? "comment" : "comments"}</span>
+            <span className="sr-only">{comments === 1 ? " comment" : " comments"}</span>
           </span>
         )}
       </div>

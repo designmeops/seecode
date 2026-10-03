@@ -282,7 +282,8 @@ export function ConfirmDialog({
               <button
                 type="button"
                 onClick={requestClose}
-                className="h-8 rounded-lg border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 shadow-xs transition-colors duration-150 hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                disabled={pending}
+                className="h-8 rounded-lg border border-zinc-200 bg-white px-3 text-sm font-medium text-zinc-700 shadow-xs transition-colors duration-150 hover:bg-zinc-50 hover:text-zinc-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 disabled:pointer-events-none disabled:opacity-50"
               >
                 {cancelLabel}
               </button>
@@ -299,8 +300,20 @@ export function ConfirmDialog({
                     fill="none"
                     className="size-3.5 animate-spin motion-reduce:animate-none"
                   >
-                    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity={0.3} strokeWidth={3} />
-                    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth={3} strokeLinecap="round" />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="9"
+                      stroke="currentColor"
+                      strokeOpacity={0.3}
+                      strokeWidth={3}
+                    />
+                    <path
+                      d="M21 12a9 9 0 0 0-9-9"
+                      stroke="currentColor"
+                      strokeWidth={3}
+                      strokeLinecap="round"
+                    />
                   </svg>
                 )}
                 {pending ? pendingLabel : confirmLabel}

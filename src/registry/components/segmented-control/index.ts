@@ -6,7 +6,8 @@ import source from "./segmented-control.tsx?raw";
 export default defineComponent({
   slug: "segmented-control",
   name: "Segmented Control",
-  description: "A Linear-style view switcher with equal-width segments and a white thumb that slides.",
+  description:
+    "A Linear-style view switcher with equal-width segments and a white thumb that slides.",
   category: "navigation",
   tags: ["animated", "keyboard", "minimal"],
   author: "orbit",
@@ -24,15 +25,25 @@ export default defineComponent({
     {
       name: "defaultValue",
       type: "string",
-      description: "Value selected on first render when uncontrolled. Defaults to the first enabled option.",
+      description:
+        "Value selected on first render when uncontrolled. Defaults to the first enabled option.",
     },
     {
       name: "onValueChange",
       type: "(value: string) => void",
       description: "Called when a segment is picked by click or arrow keys.",
     },
-    { name: "size", type: '"sm" | "md"', default: '"md"', description: "Segment height and text size." },
-    { name: "name", type: "string", description: "Renders a hidden input so the value is submitted with a form." },
+    {
+      name: "size",
+      type: '"sm" | "md"',
+      default: '"md"',
+      description: "Segment height and text size.",
+    },
+    {
+      name: "name",
+      type: "string",
+      description: "Renders a hidden input so the value is submitted with a form.",
+    },
     { name: "aria-label", type: "string", description: "Accessible name for the radio group." },
     { name: "className", type: "string", description: "Extra classes merged onto the track." },
     {

@@ -18,7 +18,10 @@ export type AnimatedTab = {
   disabled?: boolean;
 };
 
-export type AnimatedTabsProps = Omit<HTMLAttributes<HTMLDivElement>, "defaultValue" | "onChange"> & {
+export type AnimatedTabsProps = Omit<
+  HTMLAttributes<HTMLDivElement>,
+  "defaultValue" | "onChange"
+> & {
   tabs: AnimatedTab[];
   /** Tab selected on first render when uncontrolled. Defaults to the first enabled tab. */
   defaultValue?: string;

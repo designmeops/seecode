@@ -6,7 +6,8 @@ import source from "./dock.tsx?raw";
 export default defineComponent({
   slug: "dock",
   name: "Magnifying Dock",
-  description: "A frosted, macOS-style dock whose icons swell as the pointer or keyboard focus moves across them.",
+  description:
+    "A frosted, macOS-style dock whose icons swell as the pointer or keyboard focus moves across them.",
   category: "navigation",
   tags: ["animated", "interactive", "glass", "motion"],
   author: "nova",
@@ -35,7 +36,12 @@ export default defineComponent({
       default: "140",
       description: "Distance in px over which neighbouring icons are magnified.",
     },
-    { name: "aria-label", type: "string", default: '"Dock"', description: "Accessible name for the toolbar." },
+    {
+      name: "aria-label",
+      type: "string",
+      default: '"Dock"',
+      description: "Accessible name for the toolbar.",
+    },
     { name: "className", type: "string", description: "Extra classes merged onto the toolbar." },
     {
       name: "...props",
@@ -43,5 +49,5 @@ export default defineComponent({
       description: "Any other native attribute for the toolbar element.",
     },
   ],
-  preview: { component: Demo, cardScale: 0.74 },
+  preview: { component: Demo, cardScale: 0.7 },
 });

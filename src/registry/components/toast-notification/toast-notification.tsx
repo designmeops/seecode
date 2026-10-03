@@ -127,7 +127,9 @@ export function ToastProvider({
 
   const dismiss = useCallback((id?: string) => {
     setToasts((list) =>
-      list.map((item) => ((id === undefined || item.id === id) && item.open ? { ...item, open: false } : item)),
+      list.map((item) =>
+        (id === undefined || item.id === id) && item.open ? { ...item, open: false } : item,
+      ),
     );
   }, []);
 
@@ -247,9 +249,11 @@ function ToastItem({ toast, fromTop, paused, listRef, onDismiss, onRemove }: Toa
     const item = itemRef.current;
     const list = listRef.current;
     if (item && list && item.contains(document.activeElement)) {
-      const open = [...list.querySelectorAll<HTMLElement>("li[data-open]")];
-      const after = open.find((other) => item.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING);
-      const neighbour = after ?? open[open.length - 1];
+      const openItems = [...list.querySelectorAll<HTMLElement>("li[data-open]")];
+      const after = openItems.find(
+        (other) => item.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+      const neighbour = after ?? openItems[openItems.length - 1];
       (neighbour?.querySelector<HTMLElement>("button") ?? list).focus();
     }
     const timer = setTimeout(() => onRemove(id), EXIT_MS);
@@ -280,7 +284,13 @@ function ToastItem({ toast, fromTop, paused, listRef, onDismiss, onRemove }: Toa
               className={`mt-px size-[18px] shrink-0 ${variant.color}`}
             >
               <circle cx="12" cy="12" r="10" fill="currentColor" />
-              <g fill="none" stroke="white" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round">
+              <g
+                fill="none"
+                stroke="white"
+                strokeWidth={2.25}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
                 {variant.icon}
               </g>
             </svg>

@@ -94,7 +94,8 @@ export function UploadProgress({
       : failed > 0
         ? `${plural(failed, "upload")} failed`
         : `${plural(files.length, "file")} uploaded`);
-  const overallColor = uploading > 0 ? barColors.uploading : failed > 0 ? barColors.failed : barColors.complete;
+  const overallColor =
+    uploading > 0 ? barColors.uploading : failed > 0 ? barColors.failed : barColors.complete;
 
   return (
     <div
@@ -103,7 +104,10 @@ export function UploadProgress({
     >
       <div className="relative flex items-center justify-between gap-4 border-b border-zinc-100 px-4 py-3">
         <div className="min-w-0">
-          <p aria-live="polite" className="truncate text-sm font-medium tracking-tight text-zinc-900">
+          <p
+            aria-live="polite"
+            className="truncate text-sm font-medium tracking-tight text-zinc-900"
+          >
             {heading}
           </p>
           <p className="mt-0.5 text-xs text-zinc-500 tabular-nums">
@@ -133,7 +137,8 @@ export function UploadProgress({
                   {file.status === "uploading" &&
                     `${formatBytes((file.size * progress) / 100)} of ${formatBytes(file.size)}`}
                   {file.status === "complete" && `${formatBytes(file.size)} · Uploaded`}
-                  {file.status === "failed" && `Upload failed${file.error ? ` · ${file.error}` : ""}`}
+                  {file.status === "failed" &&
+                    `Upload failed${file.error ? ` · ${file.error}` : ""}`}
                 </p>
                 <div
                   role="progressbar"
@@ -166,7 +171,15 @@ export function UploadProgress({
                         onClick={() => onCancel(file.id)}
                         className="grid size-6 place-items-center rounded-md text-zinc-400 transition-colors duration-150 hover:bg-zinc-100 hover:text-zinc-700 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-indigo-500"
                       >
-                        <svg aria-hidden="true" viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round">
+                        <svg
+                          aria-hidden="true"
+                          viewBox="0 0 24 24"
+                          className="size-3.5"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                          strokeLinecap="round"
+                        >
                           <path d="M6 6l12 12M18 6 6 18" />
                         </svg>
                       </button>
@@ -176,7 +189,14 @@ export function UploadProgress({
                 {file.status === "complete" && (
                   <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 text-emerald-500">
                     <circle cx="12" cy="12" r="10" fill="currentColor" />
-                    <path d="m8 12.5 2.75 2.75L16 10" fill="none" stroke="white" strokeWidth={2.25} strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="m8 12.5 2.75 2.75L16 10"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth={2.25}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 )}
                 {file.status === "failed" &&
@@ -186,7 +206,16 @@ export function UploadProgress({
                       onClick={() => onRetry(file.id)}
                       className="inline-flex h-7 items-center gap-1 rounded-md bg-white px-2 text-xs font-medium text-zinc-900 shadow-xs ring-1 ring-zinc-950/10 transition-colors duration-150 hover:bg-zinc-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                     >
-                      <svg aria-hidden="true" viewBox="0 0 24 24" className="size-3.5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                      <svg
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        className="size-3.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
                         <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8.3" />
                         <path d="M3 3v5.3h5.3" />
                       </svg>
@@ -195,7 +224,13 @@ export function UploadProgress({
                   ) : (
                     <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 text-rose-500">
                       <circle cx="12" cy="12" r="10" fill="currentColor" />
-                      <path d="M12 7.5v5.25m0 3.75h.01" fill="none" stroke="white" strokeWidth={2.25} strokeLinecap="round" />
+                      <path
+                        d="M12 7.5v5.25m0 3.75h.01"
+                        fill="none"
+                        stroke="white"
+                        strokeWidth={2.25}
+                        strokeLinecap="round"
+                      />
                     </svg>
                   ))}
               </div>

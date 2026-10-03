@@ -6,7 +6,8 @@ import source from "./upload-progress.tsx?raw";
 export default defineComponent({
   slug: "upload-progress",
   name: "Upload Progress",
-  description: "A file upload card with per-file progress bars, overall progress, and retry for failed files.",
+  description:
+    "A file upload card with per-file progress bars, overall progress, and retry for failed files.",
   category: "feedback",
   tags: ["status", "feedback", "data"],
   author: "halftone",
@@ -23,16 +24,29 @@ export default defineComponent({
     {
       name: "title",
       type: "ReactNode",
-      description: 'Replaces the automatic heading ("Uploading 3 files", "1 upload failed", "3 files uploaded").',
+      description:
+        'Replaces the automatic heading ("Uploading 3 files", "1 upload failed", "3 files uploaded").',
     },
-    { name: "onRetry", type: "(id: string) => void", description: "Shows a Retry button on failed rows." },
-    { name: "onCancel", type: "(id: string) => void", description: "Shows a cancel button on rows still uploading." },
-    { name: "className", type: "string", description: "Extra classes merged onto the card, e.g. a width." },
+    {
+      name: "onRetry",
+      type: "(id: string) => void",
+      description: "Shows a Retry button on failed rows.",
+    },
+    {
+      name: "onCancel",
+      type: "(id: string) => void",
+      description: "Shows a cancel button on rows still uploading.",
+    },
+    {
+      name: "className",
+      type: "string",
+      description: "Extra classes merged onto the card, e.g. a width.",
+    },
     {
       name: "...props",
       type: "HTMLAttributes<HTMLDivElement>",
       description: "Any other native attribute for the card element.",
     },
   ],
-  preview: { component: Demo, cardScale: 0.74 },
+  preview: { component: Demo, cardScale: 0.7 },
 });

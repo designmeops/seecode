@@ -45,7 +45,12 @@ export default function TooltipDemo() {
   const [pressed, setPressed] = useState<string[]>(["bold"]);
 
   const button = (tool: Tool) => (
-    <Tooltip key={tool.id} content={tool.label} shortcut={tool.shortcut} defaultOpen={tool.id === "strike"}>
+    <Tooltip
+      key={tool.id}
+      content={tool.label}
+      shortcut={tool.shortcut}
+      defaultOpen={tool.id === "strike"}
+    >
       <button
         type="button"
         aria-label={tool.label}

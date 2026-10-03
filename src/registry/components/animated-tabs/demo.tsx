@@ -28,7 +28,10 @@ function Overview() {
     <div className="space-y-4">
       <dl className="grid grid-cols-3 gap-2">
         {stats.map((stat) => (
-          <div key={stat.label} className="rounded-lg bg-zinc-50 px-3 py-2.5 ring-1 ring-zinc-950/5">
+          <div
+            key={stat.label}
+            className="rounded-lg bg-zinc-50 px-3 py-2.5 ring-1 ring-zinc-950/5"
+          >
             <dt className="text-xs text-zinc-500">{stat.label}</dt>
             <dd className="mt-0.5 text-lg font-semibold tracking-tight text-zinc-900 tabular-nums">
               {stat.value}

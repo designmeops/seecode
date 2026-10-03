@@ -20,9 +20,23 @@ function Icon({ d }: { d: string }) {
 }
 
 const views = [
-  { value: "list", label: "List", icon: <Icon d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" /> },
-  { value: "board", label: "Board", icon: <Icon d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM8 7v7M12 7v4M16 7v9" /> },
-  { value: "timeline", label: "Timeline", icon: <Icon d="M3 3v16a2 2 0 0 0 2 2h16M8 7h6M11 12h7M9 17h5" /> },
+  {
+    value: "list",
+    label: "List",
+    icon: <Icon d="M9 6h11M9 12h11M9 18h11M4.5 6h.01M4.5 12h.01M4.5 18h.01" />,
+  },
+  {
+    value: "board",
+    label: "Board",
+    icon: (
+      <Icon d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM8 7v7M12 7v4M16 7v9" />
+    ),
+  },
+  {
+    value: "timeline",
+    label: "Timeline",
+    icon: <Icon d="M3 3v16a2 2 0 0 0 2 2h16M8 7h6M11 12h7M9 17h5" />,
+  },
 ];
 
 const captions: Record<string, string> = {

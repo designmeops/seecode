@@ -172,12 +172,16 @@ const MODIFIERS = new Set(["⌘", "⇧", "⌥", "⌃"]);
 
 /** `"⌘⇧X"` → `["⌘", "⇧", "X"]`, `"Ctrl+B"` → `["Ctrl", "B"]`. */
 function splitKeys(shortcut: string) {
-  if (shortcut.includes("+")) return shortcut.split("+").filter(Boolean);
+  if (shortcut.includes("+"))
+    return shortcut
+      .split("+")
+      .map((key) => key.trim())
+      .filter(Boolean);
   const keys: string[] = [];
   let rest = "";
   for (const char of shortcut) {
     if (MODIFIERS.has(char)) keys.push(char);
-    else rest += char;
+    else if (char !== " ") rest += char;
   }
   return rest ? [...keys, rest] : keys;
 }

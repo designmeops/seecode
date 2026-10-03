@@ -19,14 +19,20 @@ export default defineComponent({
     {
       name: "trigger",
       type: "ReactElement",
-      description: "Button that opens the dialog. Its onClick and ref are kept; focus returns to it.",
+      description:
+        "Button that opens the dialog. Its onClick and ref are kept; focus returns to it.",
     },
     {
       name: "confirmText",
       type: "string",
       description: "What the user must type to enable the confirm button, e.g. the project name.",
     },
-    { name: "title", type: "ReactNode", default: '"Delete project"', description: "Dialog heading." },
+    {
+      name: "title",
+      type: "ReactNode",
+      default: '"Delete project"',
+      description: "Dialog heading.",
+    },
     {
       name: "description",
       type: "ReactNode",
@@ -35,7 +41,8 @@ export default defineComponent({
     {
       name: "onConfirm",
       type: "() => void | Promise<void>",
-      description: "Runs on confirm. A promise shows a pending state; the dialog closes on resolve.",
+      description:
+        "Runs on confirm. A promise shows a pending state; the dialog closes on resolve.",
     },
     {
       name: "confirmLabel / pendingLabel / cancelLabel",

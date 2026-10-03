@@ -39,13 +39,16 @@ export function LogoMarquee({
       }`}
     >
       {logos.map((logo) => (
-        <li key={logo.name} className="flex shrink-0 items-center gap-2 text-zinc-400">
+        <li key={logo.name} className="flex shrink-0 items-center gap-2.5 text-zinc-400">
           {logo.glyph && (
-            <span aria-hidden="true" className="flex size-5 items-center justify-center [&>svg]:size-5">
+            <span
+              aria-hidden="true"
+              className="flex size-6 items-center justify-center [&>svg]:size-6"
+            >
               {logo.glyph}
             </span>
           )}
-          <span className="text-lg font-semibold tracking-tight whitespace-nowrap text-zinc-500">
+          <span className="text-xl font-semibold tracking-tight whitespace-nowrap text-zinc-500">
             {logo.name}
           </span>
         </li>
@@ -66,7 +69,10 @@ export function LogoMarquee({
         className={`flex w-max animate-[logo-marquee-scroll_30s_linear_infinite] motion-reduce:w-auto motion-reduce:animate-none ${
           pauseOnHover ? "group-hover/marquee:[animation-play-state:paused]" : ""
         }`}
-        style={{ animationDuration: `${speed}s`, animationDirection: reverse ? "reverse" : undefined }}
+        style={{
+          animationDuration: `${speed}s`,
+          animationDirection: reverse ? "reverse" : undefined,
+        }}
       >
         {list(false)}
         {list(true)}

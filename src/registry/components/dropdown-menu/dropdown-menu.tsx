@@ -347,7 +347,7 @@ export function DropdownMenuSeparator({ className = "" }: { className?: string }
   return <div role="separator" className={`-mx-1 my-1 h-px bg-zinc-100 ${className}`} />;
 }
 
-const KEY_NAMES: Record<string, string> = {
+const SYMBOL_KEYS: Record<string, string> = {
   "⌘": "Meta",
   "⇧": "Shift",
   "⌥": "Alt",
@@ -359,21 +359,41 @@ const KEY_NAMES: Record<string, string> = {
   "⎋": "Escape",
 };
 
-/** `⌘⇧D` → `["⌘", "⇧", "D"]` — symbols become their own key, the rest stays together. */
+const WORD_KEYS: Record<string, string> = {
+  cmd: "Meta",
+  command: "Meta",
+  ctrl: "Control",
+  opt: "Alt",
+  option: "Alt",
+  esc: "Escape",
+  del: "Delete",
+};
+
+/** `"⌘⇧D"` → `["⌘", "⇧", "D"]` and `"Ctrl+D"` → `["Ctrl", "D"]`. */
 function splitKeys(shortcut: string) {
+  if (shortcut.includes("+"))
+    return shortcut
+      .split("+")
+      .map((key) => key.trim())
+      .filter(Boolean);
   const keys: string[] = [];
   let rest = "";
   for (const char of shortcut) {
-    if (char in KEY_NAMES) keys.push(char);
-    else if (char !== " " && char !== "+") rest += char;
+    if (char in SYMBOL_KEYS) keys.push(char);
+    else if (char !== " ") rest += char;
   }
   return rest ? [...keys, rest] : keys;
 }
 
-/** `⌘⇧D` → `Meta+Shift+D`, the format `aria-keyshortcuts` expects. */
+/** `"⌘⇧D"` → `"Meta+Shift+D"`, the format `aria-keyshortcuts` expects. */
 function toAriaShortcut(shortcut: string) {
   return splitKeys(shortcut)
-    .map((key) => KEY_NAMES[key] ?? (key.length === 1 ? key.toUpperCase() : key))
+    .map(
+      (key) =>
+        SYMBOL_KEYS[key] ??
+        WORD_KEYS[key.toLowerCase()] ??
+        (key.length === 1 ? key.toUpperCase() : key),
+    )
     .join("+");
 }
 
