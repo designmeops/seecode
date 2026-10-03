@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — a light take on Linear's interface.
+ * Custom token names are used on purpose so Tailwind's default palette stays
+ * untouched: registry components rely on it and must render exactly as they
+ * would in a fresh Tailwind project.
+ */
+@theme {
+  --font-sans:
+    "Inter Variable", "Inter", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono:
+    "Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+    monospace;
+
+  /* Surfaces */
+  --color-app: #f5f5f7;
+  --color-panel: #ffffff;
+  --color-subtle: #fafafb;
+  --color-muted: #f3f3f5;
+  --color-hover: rgb(15 16 26 / 0.045);
+  --color-active: rgb(15 16 26 / 0.075);
+
+  /* Lines */
+  --color-line: #e6e6ea;
+  --color-line-subtle: #efeff2;
+  --color-line-strong: #d6d6dd;
+
+  /* Text */
+  --color-ink: #1c1d22;
+  --color-ink-2: #3c3f48;
+  --color-ink-3: #6b6f79;
+  --color-ink-4: #9a9ea8;
+
+  /* Brand — Linear indigo */
+  --color-brand: #5e6ad2;
+  --color-brand-hover: #5461cb;
+  --color-brand-soft: #eff0fc;
+  --color-brand-line: #d9dcf6;
+
+  /* Status */
+  --color-good: #26a061;
+  --color-good-soft: #e9f7ef;
+
+  --text-tiny: 0.6875rem;
+  --text-tiny--line-height: 1rem;
+  --text-mini: 0.8125rem;
+  --text-mini--line-height: 1.25rem;
+
+  --shadow-tiny: 0 1px 1px 0 rgb(16 17 26 / 0.04);
+  --shadow-control: 0 1px 2px 0 rgb(16 17 26 / 0.06);
+  --shadow-card: 0 1px 2px rgb(16 17 26 / 0.04);
+  --shadow-card-hover: 0 1px 2px rgb(16 17 26 / 0.04), 0 6px 20px -4px rgb(16 17 26 / 0.08);
+  --shadow-panel: 0 1px 2px rgb(16 17 26 / 0.03), 0 0 0 1px rgb(16 17 26 / 0.02);
+  --shadow-pop:
+    0 0 0 1px rgb(16 17 26 / 0.06), 0 4px 8px -2px rgb(16 17 26 / 0.06),
+    0 16px 32px -8px rgb(16 17 26 / 0.12);
+  --shadow-modal:
+    0 0 0 1px rgb(16 17 26 / 0.07), 0 8px 16px -4px rgb(16 17 26 / 0.08),
+    0 32px 64px -12px rgb(16 17 26 / 0.22);
+
+  --ease-snappy: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-pop-in: pop-in 140ms var(--ease-snappy);
+  --animate-fade-in: fade-in 160ms ease-out;
+  --animate-toast-in: toast-in 240ms var(--ease-snappy);
+  --animate-check-in: check-in 220ms var(--ease-snappy);
+  --animate-drawer-in: drawer-in 220ms var(--ease-snappy);
+
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(-3px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes drawer-in {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: none;
+    }
+  }
+  @keyframes check-in {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    color-scheme: light;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--color-app);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-mini);
+    line-height: 1.5;
+    font-feature-settings: "cv01", "ss03";
+  }
+
+  ::selection {
+    background: rgb(94 106 210 / 0.18);
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+@layer components {
+  /*
+   * Live previews render registry components in a neutral context that matches
+   * a fresh page, so what you see is what you get after pasting the code.
+   */
+  .preview-root {
+    color: #09090b;
+    font-size: 16px;
+    line-height: 1.5;
+    font-weight: 400;
+    letter-spacing: normal;
+    font-feature-settings: normal;
+    text-align: left;
+  }
+
+  /* Code view: horizontal scroll lives on the block, line numbers stay pinned. */
+  .code-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(16 17 26 / 0.16) transparent;
+  }
+}
+
+@utility bg-dots {
+  background-color: var(--color-subtle);
+  background-image: radial-gradient(circle at 1px 1px, rgb(16 17 26 / 0.085) 1px, transparent 0);
+  background-size: 14px 14px;
+}
+
+@utility bg-dots-dark {
+  background-color: #0b0b0e;
+  background-image: radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.07) 1px, transparent 0);
+  background-size: 14px 14px;
+}
+
+@utility scrollbar-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(16 17 26 / 0.14) transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}
