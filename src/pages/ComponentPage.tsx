@@ -347,8 +347,8 @@ function ComponentDetail({ item }: { item: RegistryItem }) {
               </Property>
               <Property label="Author">
                 <AuthorAvatar author={item.author} size="sm" />
-                <span className="truncate">{author.name}</span>
-                <span className="truncate text-ink-4">{author.handle}</span>
+                <span className="shrink-0">{author.name}</span>
+                <span className="min-w-0 truncate text-ink-4">{author.handle}</span>
               </Property>
               <Property label="Framework">React 19</Property>
               <Property label="Styling">Tailwind CSS v4</Property>
