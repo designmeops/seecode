@@ -25,6 +25,33 @@ const NEEDS_CLIENT = /\buse[A-Z]\w*\(|\son[A-Z]\w*=\{/;
 const importsOf = (code: string) =>
   [...code.matchAll(/\bfrom\s+["']([^"']+)["']/g)].map((match) => match[1]);
 
+/** Selectors of every style rule (outside @keyframes) and the names of @keyframes blocks. */
+function cssRules(css: string): { selectors: string[]; keyframes: string[] } {
+  const selectors: string[] = [];
+  const keyframes: string[] = [];
+  const stack: string[] = [];
+  let buffer = "";
+  for (const char of css.replace(/\/\*[\s\S]*?\*\//g, "")) {
+    if (char === "{") {
+      const prelude = buffer.trim();
+      buffer = "";
+      if (prelude.startsWith("@keyframes")) keyframes.push(prelude.split(/\s+/)[1] ?? "");
+      else if (!prelude.startsWith("@") && !stack.some((p) => p.startsWith("@keyframes"))) {
+        selectors.push(...prelude.split(",").map((selector) => selector.trim()));
+      }
+      stack.push(prelude);
+    } else if (char === "}") {
+      stack.pop();
+      buffer = "";
+    } else if (char === ";") {
+      buffer = "";
+    } else {
+      buffer += char;
+    }
+  }
+  return { selectors, keyframes };
+}
+
 describe("registry", () => {
   it("discovers every component folder", () => {
     expect(registry.length).toBeGreaterThan(0);
@@ -92,16 +119,36 @@ describe("registry", () => {
       const { webflow } = item.formats;
       if (!webflow) return;
       expect(webflow.name).toMatch(/^[a-z0-9-]+\.html$/);
+      // Webflow's Code Embed element accepts at most 50,000 characters.
+      expect(webflow.code.length).toBeLessThanOrEqual(50_000);
       expect(webflow.code).toMatch(/<style>[\s\S]+<\/style>/);
-      // Scripts must be inline; the only allowed external resource is a Google Fonts stylesheet.
+      // Self-contained: inline scripts, no external images or styles except a Google Fonts
+      // stylesheet. (Links to other pages are content, not resources.)
       expect(webflow.code).not.toMatch(/<script[^>]+src=/);
-      for (const [, href] of webflow.code.matchAll(/\b(?:href|src)="(https?:[^"]+)"/g)) {
-        expect(href).toMatch(/^https:\/\/fonts\.googleapis\.com\//);
+      expect(webflow.code).not.toMatch(/\bsrc="https?:/);
+      expect(webflow.code).not.toMatch(/url\(\s*["']?https?:/);
+      for (const [, href] of webflow.code.matchAll(/<link\b[^>]*\bhref="([^"]+)"/g)) {
+        expect(href).toMatch(/^https:\/\/fonts\.(?:googleapis|gstatic)\.com\//);
       }
-      // Every class is prefixed so the embed can't restyle the rest of the site.
+      // Every class and id is prefixed so the embed can't restyle the rest of the site.
       for (const [, classes] of webflow.code.matchAll(/class="([^"]+)"/g)) {
         for (const name of classes.split(/\s+/)) expect(name).toMatch(/^sc-/);
       }
+      const ids = [...webflow.code.matchAll(/\sid="([^"]+)"/g)].map((match) => match[1]);
+      for (const id of ids) expect(id).toMatch(/^sc-/);
+
+      // Icons come from the embed's own sprite.
+      for (const [, target] of webflow.code.matchAll(/<use[^>]*\shref="#([^"]+)"/g)) {
+        expect(ids, `<use href="#${target}"> needs a matching id`).toContain(target);
+      }
+
+      // One <style> block whose rules only reach the embed's own classes.
+      const styles = [...webflow.code.matchAll(/<style>([\s\S]*?)<\/style>/g)];
+      expect(styles).toHaveLength(1);
+      const { selectors, keyframes } = cssRules(styles[0][1]);
+      expect(selectors.length).toBeGreaterThan(0);
+      for (const selector of selectors) expect(selector).toMatch(/^\.sc-/);
+      for (const name of keyframes) expect(name).toMatch(/^sc-/);
     });
 
     it("documents usage with the component", () => {

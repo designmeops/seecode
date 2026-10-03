@@ -109,7 +109,10 @@ function useFitZoom(frameRef: RefObject<HTMLElement | null>, designWidth?: numbe
     if (!frame || !designWidth) return;
     const update = () => {
       const { paddingLeft, paddingRight } = getComputedStyle(frame);
-      const available = frame.clientWidth - parseFloat(paddingLeft) - parseFloat(paddingRight);
+      const available =
+        frame.clientWidth - (parseFloat(paddingLeft) || 0) - (parseFloat(paddingRight) || 0);
+      // A detached or hidden frame (e.g. mid hot-reload) has no width to fit into.
+      if (!Number.isFinite(available) || available <= 0) return;
       setZoom(Math.min(1, Math.max(0.25, available / designWidth)));
     };
     update();

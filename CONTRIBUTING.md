@@ -36,8 +36,9 @@ Copied verbatim into a React project, so it has to work on its own.
 Pasted into Framer (Assets → Code → New code file), so it follows Framer's conventions:
 
 - `export default function ComponentName(props)` with defaults for every prop.
-- Styles are inline style objects (Framer doesn't run Tailwind); use a `<style>` tag with
-  prefixed class names only for hover and focus states.
+- Styles are inline style objects (Framer doesn't run Tailwind, and a test rejects `className`).
+  For hover and focus states, add one `<style>` tag whose rules target prefixed `data-sc-*`
+  attributes.
 - Spread Framer's `style` prop onto the root so the component respects canvas sizing.
 - `addPropertyControls(Component, { … })` with a control and `defaultValue` for each prop, and the
   `@framerSupportedLayoutWidth` / `@framerSupportedLayoutHeight` annotations.
@@ -52,7 +53,9 @@ Pasted into a Webflow Code Embed, so it is plain HTML with its CSS (and JS if it
 - One `<style>` block; reset margins on headings and lists inside the component, and set
   `box-sizing`. Interactive behavior goes in one inline `<script>`; no external scripts.
 - Icons as inline SVG — define each once in a hidden `<svg>` sprite and `<use href="#…">` it.
-- A Google Fonts `<link>` for the typeface is the only external resource allowed.
+- A Google Fonts `<link>` for the typeface is the only external resource allowed (ordinary links
+  to other pages are fine).
+- At most 50,000 characters — the limit of Webflow's Code Embed element.
 - It reproduces the demo (what the component page shows), so designers paste a complete section.
 
 ## The demo (`demo.tsx`) and thumbnail (`thumbnail.tsx`)
