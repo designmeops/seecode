@@ -3,6 +3,8 @@
 A marketplace dashboard for copy-paste React components, styled after [Linear](https://linear.app)'s
 interface in light mode. Browse live previews and copy any component's source in one click.
 
+**Live site:** https://seecode-rho.vercel.app
+
 ![seecode — Explore page](docs/screenshot.png)
 
 ## Features
